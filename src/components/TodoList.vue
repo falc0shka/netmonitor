@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <h2>To Do List for Netmonitor</h2>
+    <h2>Netmonitor module</h2>
     <button @click="increment">
       {{ state.count }}
     </button>
