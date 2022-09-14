@@ -28,21 +28,21 @@
     if (addItemInput.value) {
       todoListItems.push({
         id: increment++,
-        action: addItemInput.value
+        action: addItemInput.value,
+        done: false
       })
       addItemInput.value = '';
     }    
   }
 
   const todoItemSelect = ref('all')
-  const selected = ref('false')
 
 </script>
 
 <template>
     <h2>ToDo List module</h2>
     <!-- <button @click="increment">{{ state.count }}</button> -->
-    <div><input type="text" v-model.lazy="addItemInput" placeholder="Input task name" />
+    <div><input type="text" v-model="addItemInput" placeholder="Input task name" />
     <button @click="todoListAddItem">Add task</button>
     </div>
     
@@ -59,7 +59,7 @@
 
     <ul>
       <template v-for="(value, index) of todoListItems" :key="value.id">
-        <todo-list-item     v-if="value.done.toString()===todoItemSelect||todoItemSelect==='all'" 
+        <todo-list-item v-if="value.done.toString()===todoItemSelect||todoItemSelect==='all'" 
           :todoAction="value.action"     
           :todoItemStatus = "value.done"
           @todoItemChecked = "value.done = true"
