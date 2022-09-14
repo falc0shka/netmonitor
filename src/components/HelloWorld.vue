@@ -29,21 +29,26 @@ function greet(event) {
 
 const question = ref('')
 const answer = ref('Need "?" in the question!')
-const lastQuestion = ref('Still null')
+const lastQuestion = ref('')
+const lastQuestionTemp = ref('')
+
 
 watch(question, async(newQuestion, oldQuestion)=>{
+  lastQuestion.value = lastQuestionTemp.value;
   if (newQuestion.indexOf('?') !== -1) {
+    lastQuestionTemp.value = newQuestion;
     answer.value = 'Please wait, trying to find answer...'
     try {
       const res = await fetch('https://yesno.wtf/api');
       answer.value = (await res.json()).answer;
-      if (oldQuestion.indexOf('?') !== -1) {
-        lastQuestion.value = oldQuestion;
-      }
+
     }
     catch (e) {
       answer.value = 'Can\'t reach "yes-no" API :(' + e;
     }
+  }
+  else {
+    answer.value = 'Need "?" in the question!'
   }
 })
 
