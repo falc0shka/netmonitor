@@ -1,13 +1,13 @@
 <script setup>
 
 import { ref, reactive, computed, watch, onMounted} from 'vue'
-import TodoList from './TodoList.vue'
+import Todo from './Todo.vue'
 
 
 </script>
 
 <template>
-  <TodoList />
+  <Todo />
 </template>
 
 <style scoped>
