@@ -1,24 +1,40 @@
 <script setup>
 
-  import { ref, reactive, computed} from 'vue'
+import { ref, reactive, computed, inject} from 'vue'
 
-  const props = defineProps([
-    'todoItemText',
-    'todoItemStatus']);
-  
-  const emit = defineEmits([
-    'todoItemRemove',
-    'todoItemChangeStatus'  
-  ]);
-  const todoItemStatus = computed({
-    get() {
-      return props.todoItemStatus
-    },
-    set(todoItemStatus) {
-      emit('todoItemChangeStatus', todoItemStatus)
-    }
-  })
-// @change="$emit('todoItemChangeStatus', todoItemStatus)">
+/**
+ * Props and Emits
+ */
+
+const props = defineProps([
+  'todoId',
+  'todoItemText',
+  'todoItemStatus'
+]);
+
+const emit = defineEmits([
+  'todoItemRemove',
+  'todoItemChangeStatus'  
+]);
+
+/**
+ * Refs and variables
+ */
+
+const todoItemStatus = computed({
+  get() {
+    return props.todoItemStatus
+  },
+  set(todoItemStatus) {
+    emit('todoItemChangeStatus', todoItemStatus)
+  }
+})
+
+/**
+ * Feature testing
+ */
+const test = inject('test');
+
 </script>
 
 <template>
@@ -28,6 +44,7 @@
       />
       {{ todoItemText }} <button @click="$emit('todoItemRemove')">Remove</button>
   </li>
+  <!-- <slot></slot> -->
 </template>
 
 <style scoped>

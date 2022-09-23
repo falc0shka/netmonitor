@@ -1,15 +1,23 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
-import Dashboard from './components/Dashboard.vue'
+import {  } from 'vue'
+
+
+
+//const AsyncComp = defineAsyncComponent(()=>import('./components/Dashboard.vue'));
+
 </script>
 
 <template>
   <header>Netmonitor app v1.0.0</header>
-  <h1>Dashboard</h1>
-  <Dashboard />
-  <HelloWorld msg="Hello world module" class="baz boo"/>
+  <nav>
+    <ul>
+      <li><router-link to="/">Dashboard</router-link></li>
+      <li><router-link :to="{name: 'hosts'}">Hosts</router-link></li>
+      <li><router-link to="/admin">Admin</router-link></li>
+    </ul>
+  </nav>
+  <router-view />
+  <!-- <HelloWorld msg="Hello world module"/> -->
 </template>
 
 <style scoped>
