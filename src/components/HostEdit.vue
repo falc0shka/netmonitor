@@ -36,12 +36,12 @@ const emit = defineEmits([
 
 
 /**
- * Lifecycle
+ * Methods
  */
 
 
 /**
- * Methods
+ * Lifecycle
  */
 
 

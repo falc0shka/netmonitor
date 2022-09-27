@@ -24,8 +24,8 @@ const routes = [
     component: ()=>import('../components/HostEdit.vue'),
     props: route => ({...route.params,testProp: 'testing prop'}),
     beforeEnter(to,from) {
-      if (to.params.id > 3) {
-        console.log(to)
+      console.log(to)
+      if (parseInt(to.params.id) < 1) {
         return {
           name: 'notfound',
           query: to.query,
@@ -41,7 +41,10 @@ const routes = [
   {
     path: '/:pathmatch(.*)*',
     name: 'notfound',
-    component: ()=>import('../components/tech/NotFoundComponent.vue')
+    component: ()=>import('../components/tech/NotFoundComponent.vue'),
+    beforeEnter(to,from) {
+      //console.log(from,to)
+    }
   }
 
 ]

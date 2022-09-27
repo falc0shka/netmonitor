@@ -71,12 +71,12 @@ const servicesList = ref([
 
 
 /**
- * Lifecycle
+ * Methods
  */
 
 
 /**
- * Methods
+ * Lifecycle
  */
 
 

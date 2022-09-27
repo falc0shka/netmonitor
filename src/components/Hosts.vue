@@ -2,6 +2,7 @@
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import HostPage from './HostPage.vue'
+import { useCounterStore } from '../stores/CounterStore'
 
 /**
  * Props and Emits
@@ -108,6 +109,12 @@ const filterService = ref([]);
 
 const activeHost = ref({});
 
+const counter = useCounterStore()
+counter.$reset()
+counter.$patch(state=>{state.count+=10})
+console.log(counter.count)
+
+
 /**
  * Remote data fetching
  */
@@ -115,11 +122,6 @@ const activeHost = ref({});
 
 /**
  * Watchers
- */
-
-
-/**
- * Lifecycle
  */
 
 
@@ -135,6 +137,11 @@ function filterReset() {
 function displayHostDetails(hostItem) {
   activeHost.value = hostItem;
 }
+
+/**
+ * Lifecycle
+ */
+
 
 /**
  * Feature testing

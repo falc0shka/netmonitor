@@ -6,9 +6,20 @@ import errorComponent from './tech/ErrorComponent.vue'
 
 import Services from './Services.vue'
 
+import { useCounterStore } from '../stores/CounterStore'
+
+
 /**
  * Props and Emits
  */
+
+ const props = defineProps([
+
+]);
+
+const emit = defineEmits([
+
+]);
 
 
 /**
@@ -20,8 +31,33 @@ const lastUpdateTime = ref(temp);
 
 const testMesssage = ref('it\'s "provide"-feature testing!');
 
+const counter = useCounterStore()
+
+counter.count++
+counter.increment()
+console.log(counter.count)
 /**
- * Toto module loader
+ * Remote data fetching
+ */
+
+
+/**
+ * Watchers
+ */
+
+
+/**
+ * Methods
+ */
+
+
+/**
+ * Lifecycle
+ */
+
+
+/**
+ * Todo module loader
  */
 
 const AsyncComp = defineAsyncComponent({
@@ -39,9 +75,11 @@ const AsyncComp = defineAsyncComponent({
   timeout: 10000
 })
 
+
 /**
  * Feature testing
  */
+
 
  provide('test', readonly(testMesssage));
 
@@ -50,8 +88,9 @@ const AsyncComp = defineAsyncComponent({
 
 <template>
   <h1>Dashboard</h1>
+
   <!-- Hosts module -->
-    <Hosts />
+    <!-- <Hosts /> -->
   <!-- Current status -->
   <div class="current-status">
       <h2>Current status  <span>GOOD</span></h2>

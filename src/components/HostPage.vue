@@ -63,12 +63,7 @@ const filters = {
 
 
 /**
- * Lifecycle
- */
-
-
-/**
- * Methods and login
+ * Methods
  */
 
 function onHashChange() {
@@ -83,6 +78,11 @@ function onHashChange() {
 
 window.addEventListener('hashchange', onHashChange)
 onHashChange()
+
+/**
+ * Lifecycle
+ */
+
 
 /**
  * Feature testing
