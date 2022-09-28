@@ -25,17 +25,12 @@ const emit = defineEmits([
 /**
  * Refs and variables
  */
-let temp = new Date();
-temp.setHours(temp.getHours()-2);
-const lastUpdateTime = ref(temp);
+let temp = new Date()
+temp.setHours(temp.getHours()-2)
+const lastUpdateTime = ref(temp)
 
-const testMesssage = ref('it\'s "provide"-feature testing!');
+const testMesssage = ref('it\'s "provide"-feature testing!')
 
-const counter = useCounterStore()
-
-counter.count++
-counter.increment()
-console.log(counter.count)
 /**
  * Remote data fetching
  */

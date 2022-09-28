@@ -19,10 +19,17 @@ const routes = [
 
   },
   {
+    path: '/hosts/:id',
+    name: 'host.page',
+    component: ()=>import('../components/HostPage.vue'),
+    props: route => ({...route.params}),
+    beforeEnter(to,from) {console.log(to)}
+  },
+  {
     path: '/hosts/:id/edit',
     name: 'host.edit',
     component: ()=>import('../components/HostEdit.vue'),
-    props: route => ({...route.params,testProp: 'testing prop'}),
+    props: route => ({...route.params}),
     beforeEnter(to,from) {
       console.log(to)
       if (parseInt(to.params.id) < 1) {

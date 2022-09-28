@@ -1,50 +1,45 @@
 <script setup>
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
+import { useHostsStore } from '../stores/HostsStore'
+import { useItemsStore } from '../stores/ItemsStore'
+
 
 /**
  * Props and Emits
  */
 
 const props = defineProps({
-  activeHost: {
-    type: Object,
+  'id': {
+    type: String,
     required: true
   }
-});
+}
+);
 
 const emit = defineEmits([
-  'host-page-close'
+
 ]);
+
+/**
+ * State
+ */
+
+const hostsStore = useHostsStore()
+hostsStore.getById(props.id)
+const hostItem = hostsStore.host
+
+const itemsStore = useItemsStore()
+itemsStore.getById(props.id)
+const itemsList = itemsStore.hostItems
 
 /**
  * Refs and variables
  */
 
-const itemsList = ref([
-  {
-    itemId: 234,
-    itemTypeId: 1,
-    hostId: 1,
-    itemStatus: 'true'
-  },
-  {
-    itemId: 2544,
-    itemTypeId: 2,
-    hostId: 1,
-    itemStatus: 'false'
-  },
-  {
-    itemId: 8953,
-    itemTypeId: 3,
-    hostId: 1,
-    itemStatus: 'true'
-  },
-]);
-
 const visibility = ref('all')
 
-const filteredItemsList = computed(() => filters[visibility.value](itemsList.value))
+const filteredItemsList = computed(() => filters[visibility.value](itemsList))
 
 const filters = {
   all: (itemsList) => itemsList,
@@ -93,14 +88,21 @@ onHashChange()
 
 
 <template>
-  <router-link :to="{name: 'host.edit', params: {id: activeHost.hostId}}">Edit host</router-link>
-  <button @click="$emit('host-page-close')">Close</button>
-  <p>Host ID: {{activeHost.hostId}}</p>
-  <p>Host name: {{activeHost.hostName}}</p>
-  <p>Host status: {{activeHost.hostStatus}}</p>
-  <p>Notes: {{activeHost.noteId}}</p>
+  <h1>{{hostItem.hostName}}</h1>
+  <router-link :to="{name: 'host.edit', params: {id: id}}">Edit settings</router-link>
+  <router-link :to="{name: 'hosts'}">Back to hosts list</router-link>
+
+  <p>Host ID: {{hostItem.hostId}}</p>
+  <p>Host name: {{hostItem.hostName}}</p>
+  <p>Host FQDN: {{hostItem.hostFqdn}}</p>
+  <p>Host IP: {{hostItem.hostIp}}</p>
+  <p>Host status: {{hostItem.hostStatus}}</p>
+  <p>Host service: {{hostItem.serviceId}}</p>
+  <p>Host cluster: {{hostItem.clusterId}}</p>
+  <p>Notes: {{hostItem.hostId}}</p>
+
   <div class="hostitems">
-    <ul class="filters">
+    <ul class="filters" v-if="itemsList.length">
       <li>
         <a href="#all" :class="{ selected: visibility === 'all' }">All items</a>
       </li>
@@ -112,14 +114,14 @@ onHashChange()
       </li>
     </ul> 
 
-    <div class="hosts">
+    <div class="items">
       <div class="titles row">
-        <p class="itemIdTitle">hostId</p>
-        <p class="itemTypeIdTitle">hostName</p>
-        <p class="hostIdTitle">serviceId</p>
-        <p class="itemStatusTitle">hostStatus</p>
+        <p class="itemIdTitle">itemId</p>
+        <p class="itemTypeIdTitle">itemTypeId</p>
+        <p class="hostIdTitle">hostId</p>
+        <p class="itemStatusTitle">itemStatus</p>
       </div>
-      <div class="t-body">
+      <div class="t-body" v-if="itemsList.length">
         <div class="items row" v-for="item of filteredItemsList">
           <p class="itemId">{{item.itemId}}</p>
           <p class="itemTypeId">{{item.itemTypeId}}</p>
@@ -127,6 +129,7 @@ onHashChange()
           <p class="itemStatus">{{item.itemStatus}}</p>
         </div>
       </div>
+      <div class="t-body" v-else>No items to display</div>
     </div> 
   </div>
 

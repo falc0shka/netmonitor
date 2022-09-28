@@ -1,31 +1,23 @@
 <script setup>
 
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
-import { useHostsStore } from '../stores/HostsStore'
 
 /**
  * Props and Emits
  */
 
-const props = defineProps({
-  'id': {
-    type: String,
+const props = defineProps(
+{
+  hostItem: {
+    type: Object,
     required: true
   }
-});
+}
+);
 
 const emit = defineEmits([
 
 ]);
-
-/**
- * State
- */
-
-const hostsStore = useHostsStore()
-hostsStore.getById(props.id)
-const hostItem = hostsStore.host
-
 
 /**
  * Refs and variables
@@ -38,12 +30,12 @@ const hostItem = hostsStore.host
 
 
 /**
- * Watchers
+ * Methods
  */
 
 
 /**
- * Methods
+ * Watchers
  */
 
 
@@ -56,19 +48,15 @@ const hostItem = hostsStore.host
  * Feature testing
  */
   
-
+  
 </script>
 
 
 <template>
-  <h1>{{hostItem.hostName}} edit page</h1>
-  <div>
-    <button @click="$router.back()">Go back</button>
-  </div>
+  FQDN: {{hostItem.hostFqdn}} IP: {{hostItem.hostIp}}
 </template>
 
 
 <style scoped>
 
 </style>
-

@@ -1,8 +1,8 @@
 <script setup>
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
-import HostPage from './HostPage.vue'
-import { useCounterStore } from '../stores/CounterStore'
+import { useHostsStore } from '../stores/HostsStore'
+import HostInfo from './HostInfo.vue'
 
 /**
  * Props and Emits
@@ -10,42 +10,16 @@ import { useCounterStore } from '../stores/CounterStore'
 
 
 /**
+ * State
+ */
+
+const hostsStore = useHostsStore()
+
+/**
  * Refs and variables
  */
 
-const hostsList = ref([
-  {
-    hostId: 1,
-    clusterId: 1,
-    serviceId: 1,
-    noteId: 12,
-    hostName: 'Netmonitor',
-    hostFqdn: 'netmonitor.local',
-    hostIp: '10.0.0.1',
-    hostStatus: 'true'
-  },
-  {
-    hostId: 2,
-    clusterId: 2,
-    serviceId: 7,
-    noteId: 15,
-    hostName: 'CUCM 01',
-    hostFqdn: 'cucm01.local',
-    hostIp: '10.0.0.2',
-    hostStatus: 'false'
-  },
-  {
-    hostId: 3,
-    clusterId: 2,
-    serviceId: 7,
-    noteId: 10,
-    hostName: 'CUCM 02',
-    hostFqdn: 'cucm02.local',
-    hostIp: '10.0.0.3',
-    hostStatus: 'true'
-  },
-]);
-
+const hostsList = hostsStore.hosts
 
 const servicesList = ref([
   {
@@ -95,11 +69,10 @@ const servicesList = ref([
   },
 ]);
 
-const filteredHostsList = computed(()=>hostsList.value.filter(host=>{
+const filteredHostsList = computed(()=>hostsList.filter(host=>{
   return (filterStatus.value=='any'||filterStatus.value==host.hostStatus)
   &&(filterService.value.length===0||filterService.value.some(service=>service==host.serviceId))
 }));
-
 
 //const defaultFilterStatus = ['true', 'false']
 //const defaultFilterService = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -109,11 +82,7 @@ const filterService = ref([]);
 
 const activeHost = ref({});
 
-const counter = useCounterStore()
-counter.$reset()
-counter.$patch(state=>{state.count+=10})
-console.log(counter.count)
-
+const displayHostDetails = ref(new Set())
 
 /**
  * Remote data fetching
@@ -132,10 +101,6 @@ console.log(counter.count)
 function filterReset() {
   filterStatus.value = 'any';
   filterService.value = [];
-}
-
-function displayHostDetails(hostItem) {
-  activeHost.value = hostItem;
 }
 
 /**
@@ -179,14 +144,25 @@ function displayHostDetails(hostItem) {
     <div class="t-body">
       <div class="items row" v-for="hostItem of filteredHostsList">
         <p class="hostId">{{hostItem.hostId}}</p>
-        <p class="hostName" @click="displayHostDetails(hostItem)">{{hostItem.hostName}}<br>FQDN: {{hostItem.hostFqdn}}<br>IP: {{hostItem.hostIp}}</p>
+        <p class="hostName">
+          <router-link :to="{name: 'host.page', params: {id: hostItem.hostId}}">
+            {{hostItem.hostName}}
+          </router-link>
+          <span @click="displayHostDetails.add(hostItem.hostId)" v-if="!displayHostDetails.has(hostItem.hostId)">
+            Show details
+          </span>
+          <span @click="displayHostDetails.delete(hostItem.hostId)" v-if="displayHostDetails.has(hostItem.hostId)">
+            Hide details
+          </span>     
+        </p>
         <p class="serviceId">{{hostItem.serviceId}}</p>
         <p class="hostStatus">{{hostItem.hostStatus}}</p>
+        <div class="break-column"></div>
+        <div class="host-details" v-if="displayHostDetails.has(hostItem.hostId)">
+          <HostInfo v-bind:hostItem="hostItem" />
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="host-details" v-if="activeHost.hostId" >
-  <HostPage v-bind:activeHost="activeHost" @host-page-close="activeHost={}"/>
+    </div> 
   </div>
 </template>
 
@@ -197,6 +173,7 @@ function displayHostDetails(hostItem) {
 }
 .row {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
 }
 .row .hostId,
@@ -219,5 +196,10 @@ span {
 }
 .host-details {
   border: 1px dotted #aaa;
+  width: 100%;
+}
+.break-column {
+  flex-basis: 100%;
+  width: 0;
 }
 </style>
