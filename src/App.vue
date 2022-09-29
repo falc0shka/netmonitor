@@ -8,7 +8,7 @@ import {  } from 'vue'
 </script>
 
 <template>
-  <header>Netmonitor app v1.0.0</header>
+  <header><font-awesome-icon icon="fa-solid fa-network-wired" size="3x"/>Netmonitor app v1.0.0</header>
   <nav>
     <ul>
       <li><router-link to="/">Dashboard</router-link></li>
