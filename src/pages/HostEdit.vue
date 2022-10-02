@@ -64,6 +64,7 @@ const hostItem = hostsStore.host
   <h1>{{hostItem.hostName}} edit page</h1>
   <div>
     <button @click="$router.back()">Go back</button>
+    <button @click="$router.back()">Go back</button>
   </div>
 </template>
 

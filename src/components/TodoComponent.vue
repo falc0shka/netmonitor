@@ -12,6 +12,8 @@ const todoItemList = reactive([]);
 const todoItemSelect = ref('all')
 const todoItemInput = ref('')
 const todoItemInputRef = ref(null)
+const todoItemLoading = ref(true)
+
 let increment = 4;
 
 /**
@@ -36,6 +38,7 @@ setTimeout(() => {
     todoItemStatus: true
   }
 )
+todoItemLoading.value = false
 }, 2000)  
 
 
@@ -43,7 +46,7 @@ setTimeout(() => {
  * Lifecycle
  */
 
-onMounted(()=>todoItemInputRef.value.focus());
+// onMounted(()=>todoItemInputRef.value.focus());
 
 /**
  * Methods
@@ -85,7 +88,8 @@ function todoItemChangeStatus(index,newStatus) {
         <option value="true">Only done</option>
       </select>
     <ul>
-      <li v-if="!todoItemList.length">No items to display.</li>
+      <div v-if="todoItemLoading">Loading items...</div>
+      <div v-else-if="!todoItemList.length">No items to display.</div>
       <template v-for="(value, index) of todoItemList" :key="value.todoId">
         <todo-item v-if="value.todoItemStatus.toString()===todoItemSelect||todoItemSelect==='all'" 
           v-bind="value"

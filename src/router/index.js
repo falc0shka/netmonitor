@@ -1,65 +1,30 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { route } from 'quasar/wrappers'
+import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
+import routes from './routes'
 
-import HelloWorld from '../components/HelloWorld.vue'
+/*
+ * If not building with SSR mode, you can
+ * directly export the Router instantiation;
+ *
+ * The function below can be async too; either use
+ * async/await or return a Promise which resolves
+ * with the Router instance.
+ */
 
-const routes = [
-  {path: '/', name: 'dashboard', component: ()=>import('../components/Dashboard.vue')},
-  {
-    path: '/hosts',
-    name: 'hosts',
-    component: ()=>import('../components/Hosts.vue'),
-    // children: [
-    //   {
-    //     path: ':id',
-    //     name: 'host.page',
-    //     component: ()=>import('../components/HostPage.vue'),
-    //     props: route => ({...route.params})
-    //   }
-    // ]
+export default route(function (/* { store, ssrContext } */) {
+  const createHistory = process.env.SERVER
+    ? createMemoryHistory
+    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
 
-  },
-  {
-    path: '/hosts/:id',
-    name: 'host.page',
-    component: ()=>import('../components/HostPage.vue'),
-    props: route => ({...route.params}),
-    beforeEnter(to,from) {console.log(to)}
-  },
-  {
-    path: '/hosts/:id/edit',
-    name: 'host.edit',
-    component: ()=>import('../components/HostEdit.vue'),
-    props: route => ({...route.params}),
-    beforeEnter(to,from) {
-      console.log(to)
-      if (parseInt(to.params.id) < 1) {
-        return {
-          name: 'notfound',
-          query: to.query,
-          hash: to.hash,
-          params: {
-            pathmatch: to.path.split('/').slice(1)
-          }
-        }
-      }
-    }
-  },
+  const Router = createRouter({
+    scrollBehavior: () => ({ left: 0, top: 0 }),
+    routes,
 
-  {
-    path: '/:pathmatch(.*)*',
-    name: 'notfound',
-    component: ()=>import('../components/tech/NotFoundComponent.vue'),
-    beforeEnter(to,from) {
-      //console.log(from,to)
-    }
-  }
+    // Leave this as is and make changes in quasar.conf.js instead!
+    // quasar.conf.js -> build -> vueRouterMode
+    // quasar.conf.js -> build -> publicPath
+    history: createHistory(process.env.VUE_ROUTER_BASE)
+  })
 
-]
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  linkActiveClass: 'active-link'
+  return Router
 })
-
-export default router

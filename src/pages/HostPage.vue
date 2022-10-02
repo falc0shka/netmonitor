@@ -122,7 +122,7 @@ onHashChange()
         <p class="itemStatusTitle">itemStatus</p>
       </div>
       <div class="t-body" v-if="itemsList.length">
-        <div class="items row" v-for="item of filteredItemsList">
+        <div class="items row" v-for="item of filteredItemsList" :key="item.itemId">
           <p class="itemId">{{item.itemId}}</p>
           <p class="itemTypeId">{{item.itemTypeId}}</p>
           <p class="hostId">{{item.hostId}}</p>

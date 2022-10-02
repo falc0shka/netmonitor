@@ -2,7 +2,7 @@
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import { useHostsStore } from '../stores/HostsStore'
-import HostInfo from './HostInfo.vue'
+import HostInfo from '../components/HostInfo.vue'
 
 /**
  * Props and Emits
@@ -126,7 +126,7 @@ function filterReset() {
   <span><input type="radio" id="status-fail" value="false" v-model="filterStatus"><label for="status-fail">FAIL</label></span>
 
   <div>Filter by service:</div>
-  <template v-for="service of servicesList">
+  <template v-for="service of servicesList" :key="service.serviceId">
     <span>
       <input type="checkbox" :id="`service-${service.serviceId}`" :value="service.serviceId" v-model="filterService">
       <label :for="`service-${service.serviceId}`">{{service.serviceName}}</label>
@@ -142,7 +142,7 @@ function filterReset() {
       <p class="hostStatusTitle">hostStatus</p>
     </div>
     <div class="t-body">
-      <div class="items row" v-for="hostItem of filteredHostsList">
+      <div class="items row" v-for="hostItem of filteredHostsList" :key="hostItem.hostId">
         <p class="hostId">{{hostItem.hostId}}</p>
         <p class="hostName">
           <router-link :to="{name: 'host.page', params: {id: hostItem.hostId}}">

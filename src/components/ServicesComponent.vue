@@ -96,7 +96,7 @@ const servicesList = ref([
       <p class="serviceStatus">serviceStatus</p>
     </div>
     <div class="t-body">
-      <div class="items row" v-for="serviceItem of servicesList">
+      <div class="items row" v-for="serviceItem of servicesList" :key="serviceItem.serviceId">
         <p class="serviceId">{{serviceItem.serviceId}}&nbsp;</p>
         <p class="serviceName">{{serviceItem.serviceName}}&nbsp;</p>
         <p class="serviceStatus">{{serviceItem.serviceStatus}}&nbsp;</p>

@@ -1,11 +1,13 @@
 <template>
-  <router-view />
+  <q-page class="flex flex-center">
+    test
+  </q-page>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'App'
+  name: 'IndexPage'
 })
 </script>
