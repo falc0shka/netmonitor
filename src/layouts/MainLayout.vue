@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Netmonitor v0.0.1
+          Netmonitor v0.0.1 (by falc0shka)
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
