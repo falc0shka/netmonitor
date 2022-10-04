@@ -89,17 +89,30 @@ onHashChange()
 
 <template>
   <h1>{{hostItem.hostName}}</h1>
-  <router-link :to="{name: 'host.edit', params: {id: id}}">Edit settings</router-link>
-  <router-link :to="{name: 'hosts'}">Back to hosts list</router-link>
+  <q-btn 
+    color="primary"
+    label="Back to hosts list" 
+    :to="{name: 'hosts'}"
+    class="q-ma-sm"
+  />
+  <q-btn 
+    color="primary"
+    label="Edit host settings" 
+    :to="{name: 'host.edit', params: {id: id}}"
+    class="q-ma-sm"
+  />
 
-  <p>Host ID: {{hostItem.hostId}}</p>
-  <p>Host name: {{hostItem.hostName}}</p>
-  <p>Host FQDN: {{hostItem.hostFqdn}}</p>
-  <p>Host IP: {{hostItem.hostIp}}</p>
-  <p>Host status: {{hostItem.hostStatus}}</p>
-  <p>Host service: {{hostItem.serviceId}}</p>
-  <p>Host cluster: {{hostItem.clusterId}}</p>
-  <p>Notes: {{hostItem.hostId}}</p>
+
+  <q-card class="q-pa-md">
+    <p>Host ID: {{hostItem.hostId}}</p>
+    <p>Host name: {{hostItem.hostName}}</p>
+    <p>Host FQDN: {{hostItem.hostFqdn}}</p>
+    <p>Host IP: {{hostItem.hostIp}}</p>
+    <p>Host status: {{hostItem.hostStatus}}</p>
+    <p>Host service: {{hostItem.serviceId}}</p>
+    <p>Host cluster: {{hostItem.clusterId}}</p>
+    <p>Notes: {{hostItem.hostId}}</p>
+  </q-card>
 
   <div class="hostitems">
     <ul class="filters" v-if="itemsList.length">

@@ -31,7 +31,7 @@ const routes = [
       {
         path: '/hosts/:id/edit',
         name: 'host.edit',
-        component: ()=>import('../pages/HostEdit.vue'),
+        component: ()=>import('../pages/HostEditPage.vue'),
         props: route => ({...route.params}),
         beforeEnter(to,from) {
           console.log(to)

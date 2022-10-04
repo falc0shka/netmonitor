@@ -84,41 +84,50 @@ const TodoAsyncComp = defineAsyncComponent({
 <template>
   <h1>Dashboard</h1>
 
-  <div class="row">
-      <div class="col">
-        <!-- Current status -->
-        <div class="current-status">
-          <h2>Current status  <span>GOOD</span></h2>
-          <h3>Last update from server</h3>
-          {{lastUpdateTime.toLocaleString('ru-RU')}}
-          <h3>Alerts count</h3>
-          <h3>Device count</h3>
-        </div>
-      </div>
-      <div style="position: relative;" class="col">  
+  <div class="fit row q-col-gutter-sm q-mt-sm">
+    <div class="col-xs-12 col-sm-12 col-md-6">
+      <!-- Current status -->
+      <q-card class="my-content current-status">
+        <h2>Current status  <span>GOOD</span></h2>
+        <h3>Last update from server</h3>
+        {{lastUpdateTime.toLocaleString('ru-RU')}}
+        <h3>Alerts count</h3>
+        <h3>Device count</h3>
+      </q-card>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
+      <q-card class="my-content">
         <!-- Toto module -->
         <TodoAsyncComp />
-      </div>
+      </q-card>
     </div>
-
-    <div class="row">
-      <div class="col">
+  </div>
+  <div class="fit row q-col-gutter-sm q-mt-sm">
+    <div class="col-xs-12 col-sm-12 col-md-6">
+      <q-card class="my-content">
         .col
-      </div>
-      <div class="col">
+      </q-card>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6">
+      <q-card class="my-content">
         <!-- Services module -->
         <Services />
-      </div>
+      </q-card>
     </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
-.row > div {
+// .row > div {
+//   padding: 10px 15px;
+//   background: rgba(86,61,124,.15);
+//   border: 1px solid rgba(86,61,124,.2);
+// }
+// .row + .row {
+//   margin-top: 1rem;
+// }
+.my-content {
+  height: 100%;
   padding: 10px 15px;
-  background: rgba(86,61,124,.15);
-  border: 1px solid rgba(86,61,124,.2);
-}
-.row + .row {
-  margin-top: 1rem;
 }
 </style>

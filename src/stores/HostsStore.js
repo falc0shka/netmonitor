@@ -47,6 +47,18 @@ export const useHostsStore = defineStore('hosts', {
           this.host = { error };
       }
     },
+    updateById(id, values) {
+      try {
+        this.host = this.hosts.filter(host=>host.hostId==id)[0]
+        if (!this.host) throw new Error('Cant find host with such ID!')
+        else {
+          this.host.hostName = values.hostName
+          this.host.hostFqdn = values.hostFqdn
+        }
+      } catch (error) {
+          this.host = { error };
+      }
+    }
   }
 }
 )
