@@ -10,7 +10,7 @@ import { useItemsStore } from '../stores/ItemsStore'
  */
 
 const props = defineProps({
-  'id': {
+  '_id': {
     type: String,
     required: true
   }
@@ -26,12 +26,13 @@ const emit = defineEmits([
  */
 
 const hostsStore = useHostsStore()
-hostsStore.getById(props.id)
-const hostItem = hostsStore.host
+
+hostsStore.getHosts() // refetch hosts
+  .then(()=>hostsStore.getById(props._id)) // find host
+  .catch(e=>console.log(e))
 
 const itemsStore = useItemsStore()
-itemsStore.getById(props.id)
-const itemsList = itemsStore.hostItems
+itemsStore.getById(props._id)
 
 /**
  * Refs and variables
@@ -39,12 +40,12 @@ const itemsList = itemsStore.hostItems
 
 const visibility = ref('all')
 
-const filteredItemsList = computed(() => filters[visibility.value](itemsList))
+const filteredItemsList = computed(() => filters[visibility.value](itemsStore.hostItems))
 
 const filters = {
-  all: (itemsList) => itemsList,
-  ok: (itemsList) => itemsList.filter((item) => item.itemStatus == 'true'),
-  fail: (itemsList) => itemsList.filter((item) => item.itemStatus == 'false')
+  all: (itemsList) => itemsStore.hostItems,
+  ok: (itemsList) => itemsStore.hostItems.filter((item) => item.itemStatus == 'true'),
+  fail: (itemsList) => itemsStore.hostItems.filter((item) => item.itemStatus == 'false')
 }
 
 /**
@@ -88,7 +89,7 @@ onHashChange()
 
 
 <template>
-  <h1>{{hostItem.hostName}}</h1>
+  <h1>{{hostsStore.host.hostName}}</h1>
   <q-btn 
     color="primary"
     label="Back to hosts list" 
@@ -98,24 +99,24 @@ onHashChange()
   <q-btn 
     color="primary"
     label="Edit host settings" 
-    :to="{name: 'host.edit', params: {id: id}}"
+    :to="{name: 'host.edit', params: {_id: _id}}"
     class="q-ma-sm"
   />
 
 
   <q-card class="q-pa-md">
-    <p>Host ID: {{hostItem.hostId}}</p>
-    <p>Host name: {{hostItem.hostName}}</p>
-    <p>Host FQDN: {{hostItem.hostFqdn}}</p>
-    <p>Host IP: {{hostItem.hostIp}}</p>
-    <p>Host status: {{hostItem.hostStatus}}</p>
-    <p>Host service: {{hostItem.serviceId}}</p>
-    <p>Host cluster: {{hostItem.clusterId}}</p>
-    <p>Notes: {{hostItem.hostId}}</p>
+    <p>Host ID: {{hostsStore.host._id}}</p>
+    <p>Host name: {{hostsStore.host.hostName}}</p>
+    <p>Host FQDN: {{hostsStore.host.hostFqdn}}</p>
+    <p>Host IP: {{hostsStore.host.hostIp}}</p>
+    <p>Host status: {{hostsStore.host.hostStatus}}</p>
+    <p>Host service: {{hostsStore.host.hostService}}</p>
+    <p>Host cluster: {{hostsStore.host.hostCluster}}</p>
+    <p>Notes: {{hostsStore.host.hostNote}}</p>
   </q-card>
 
   <div class="hostitems">
-    <ul class="filters" v-if="itemsList.length">
+    <ul class="filters" v-if="itemsStore.hostItems.length">
       <li>
         <a href="#all" :class="{ selected: visibility === 'all' }">All items</a>
       </li>
@@ -134,7 +135,7 @@ onHashChange()
         <p class="hostIdTitle">hostId</p>
         <p class="itemStatusTitle">itemStatus</p>
       </div>
-      <div class="t-body" v-if="itemsList.length">
+      <div class="t-body" v-if="itemsStore.hostItems.length">
         <div class="items row" v-for="item of filteredItemsList" :key="item.itemId">
           <p class="itemId">{{item.itemId}}</p>
           <p class="itemTypeId">{{item.itemTypeId}}</p>

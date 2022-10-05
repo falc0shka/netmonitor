@@ -1,47 +1,35 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const useHostsStore = defineStore('hosts', {
-  state: ()=>({
-    hosts: [
-      {
-        hostId: 1,
-        clusterId: 1,
-        serviceId: 1,
-        noteId: 12,
-        hostName: 'Netmonitor',
-        hostFqdn: 'netmonitor.local',
-        hostIp: '10.0.0.1',
-        hostStatus: 'true'
-      },
-      {
-        hostId: 2,
-        clusterId: 2,
-        serviceId: 7,
-        noteId: 15,
-        hostName: 'CUCM 01',
-        hostFqdn: 'cucm01.local',
-        hostIp: '10.0.0.2',
-        hostStatus: 'false'
-      },
-      {
-        hostId: 3,
-        clusterId: 2,
-        serviceId: 7,
-        noteId: 10,
-        hostName: 'CUCM 02',
-        hostFqdn: 'cucm02.local',
-        hostIp: '10.0.0.3',
-        hostStatus: 'true'
-      },
-    ],
-    host: {}
-  }),
+  state: ()=>{
+    return {
+      hosts: [
+        {
+          _id: 1,
+          hostCluster: 1,
+          hostService: 1,
+          noteId: 12,
+          hostName: 'Netmonitor',
+          hostFqdn: 'netmonitor.local',
+          hostIp: '10.0.0.1',
+          hostStatus: 'true'
+        }
+      ],
+      host: {},
+      counter: 0,
+    }
+  },
   actions: {
+    async getHosts(){
+      this.hosts = (await axios.get('http://10.0.0.87:3000/v1/hosts')).data
+      console.log('test',this.hosts)
+    },
     async getById(id) {
       this.host = { loading: true }
       try {
-          this.host = this.hosts.filter(host=>host.hostId==id)[0]
+          this.host = this.hosts.filter(host=>host._id==id)[0]
           if (!this.host) throw new Error('Host is not defined!')
       } catch (error) {
           this.host = { error };
@@ -49,14 +37,14 @@ export const useHostsStore = defineStore('hosts', {
     },
     updateById(id, values) {
       try {
-        this.host = this.hosts.filter(host=>host.hostId==id)[0]
+        this.host = this.hosts.filter(host=>host._id==id)[0]
         if (!this.host) throw new Error('Cant find host with such ID!')
         else {
           this.host.hostName = values.hostName
           this.host.hostFqdn = values.hostFqdn
         }
-      } catch (error) {
-          this.host = { error };
+      } catch (e) {
+          console.log(e)
       }
     }
   }

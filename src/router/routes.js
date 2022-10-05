@@ -22,20 +22,22 @@ const routes = [
     
       },
       {
-        path: '/hosts/:id',
+        path: '/hosts/:_id',
         name: 'host.page',
         component: ()=>import('../pages/HostPage.vue'),
         props: route => ({...route.params}),
-        beforeEnter(to,from) {console.log(to)}
+        beforeEnter(to,from) {
+          console.log(to)
+        }
       },
       {
-        path: '/hosts/:id/edit',
+        path: '/hosts/:_id/edit',
         name: 'host.edit',
         component: ()=>import('../pages/HostEditPage.vue'),
         props: route => ({...route.params}),
         beforeEnter(to,from) {
-          console.log(to)
-          if (parseInt(to.params.id) < 1) {
+          //console.log(to)
+          if (!true) {
             return {
               name: 'notfound',
               query: to.query,

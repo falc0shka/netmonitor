@@ -14,12 +14,11 @@ import HostInfo from '../components/HostInfo.vue'
  */
 
 const hostsStore = useHostsStore()
+hostsStore.getHosts()
 
 /**
  * Refs and variables
  */
-
-const hostsList = hostsStore.hosts
 
 const servicesList = ref([
   {
@@ -69,11 +68,6 @@ const servicesList = ref([
   },
 ]);
 
-const filteredHostsList = computed(()=>hostsList.filter(host=>{
-  return (filterStatus.value=='any'||filterStatus.value==host.hostStatus)
-  &&(filterService.value.length===0||filterService.value.some(service=>service==host.serviceId))
-}));
-
 //const defaultFilterStatus = ['true', 'false']
 //const defaultFilterService = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -83,6 +77,16 @@ const filterService = ref([]);
 const activeHost = ref({});
 
 const displayHostDetails = ref(new Set())
+
+const filteredHostsList = computed(()=>{
+  console.log('computed',hostsStore.hosts)
+  return hostsStore.hosts.filter(host=>{
+      return (filterStatus.value=='any'||filterStatus.value==host.hostStatus)
+            &&(filterService.value.length===0||filterService.value.some(service=>service==host.serviceId))
+    }
+  )
+});
+
 
 /**
  * Remote data fetching
@@ -142,23 +146,23 @@ function filterReset() {
       <p class="hostStatusTitle">hostStatus</p>
     </div>
     <div class="t-body">
-      <div class="items row" v-for="hostItem of filteredHostsList" :key="hostItem.hostId">
-        <p class="hostId">{{hostItem.hostId}}</p>
+      <div class="items row" v-for="hostItem of filteredHostsList" :key="hostItem._id">
+        <p class="hostId">{{hostItem._id}}</p>
         <p class="hostName">
-          <router-link :to="{name: 'host.page', params: {id: hostItem.hostId}}">
+          <router-link :to="{name: 'host.page', params: {_id: hostItem._id}}">
             {{hostItem.hostName}}
           </router-link>
-          <span @click="displayHostDetails.add(hostItem.hostId)" v-if="!displayHostDetails.has(hostItem.hostId)">
+          <span @click="displayHostDetails.add(hostItem._id)" v-if="!displayHostDetails.has(hostItem._id)">
             Show details
           </span>
-          <span @click="displayHostDetails.delete(hostItem.hostId)" v-if="displayHostDetails.has(hostItem.hostId)">
+          <span @click="displayHostDetails.delete(hostItem._id)" v-if="displayHostDetails.has(hostItem._id)">
             Hide details
           </span>     
         </p>
         <p class="serviceId">{{hostItem.serviceId}}</p>
         <p class="hostStatus">{{hostItem.hostStatus}}</p>
         <div class="break-column"></div>
-        <div class="host-details" v-if="displayHostDetails.has(hostItem.hostId)">
+        <div class="host-details" v-if="displayHostDetails.has(hostItem._id)">
           <HostInfo v-bind:hostItem="hostItem" />
         </div>
       </div>

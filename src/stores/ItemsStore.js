@@ -7,19 +7,19 @@ export const useItemsStore = defineStore('items', {
       {
         itemId: 234,
         itemTypeId: 1,
-        hostId: 1,
+        hostId: "633dd74e83fe13b2e3488247",
         itemStatus: 'true'
       },
       {
         itemId: 2544,
         itemTypeId: 2,
-        hostId: 1,
+        hostId: "633dd74e83fe13b2e3488247",
         itemStatus: 'false'
       },
       {
         itemId: 8953,
         itemTypeId: 3,
-        hostId: 1,
+        hostId: "633dd74e83fe13b2e3488247",
         itemStatus: 'true'
       },
     ],

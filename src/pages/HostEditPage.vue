@@ -3,13 +3,15 @@
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import { useHostsStore } from '../stores/HostsStore'
 import { useQuasar } from 'quasar'
+import { store } from 'quasar/wrappers';
+import { storeToRefs } from 'pinia';
 
 /**
  * Props and Emits
  */
 
 const props = defineProps({
-  'id': {
+  '_id': {
     type: String,
     required: true
   }
@@ -20,27 +22,27 @@ const emit = defineEmits([
 ]);
 
 /**
- * State
- */
-
-const hostsStore = useHostsStore()
-hostsStore.getById(props.id)
-const hostItem = hostsStore.host
-
-
-
-/**
  * Refs and variables
  */
 
 const $q = useQuasar()
 
-let formDefaults = {
-  formHostName: hostItem.hostName,
-  formHostFqdn: hostItem.hostFqdn
-}
-const formHostName = ref(hostItem.hostName)
-const formHostFqdn = ref(hostItem.hostFqdn)
+const formDefaults = reactive({})
+
+/**
+ * State
+ */
+
+const hostsStore = useHostsStore()
+hostsStore.getHosts() // refetch hosts
+  .then(()=>hostsStore.getById(props._id)) // find host
+  .then(()=>{
+    formDefaults.formHostName = hostsStore.host.hostName  // assign default to form values
+    formDefaults.formHostFqdn = hostsStore.host.hostFqdn
+  })
+  .catch(e=>console.log(e))
+  
+  console.log(formDefaults)
 
 /**
  * Remote data fetching
@@ -57,14 +59,14 @@ const formHostFqdn = ref(hostItem.hostFqdn)
  */
 function onSubmit() {
   hostsStore.updateById(
-    props.id,
+    props._id,
     {
-      hostName: formHostName.value,
-      hostFqdn: formHostFqdn.value
+      hostName: hostsStore.host.hostName,
+      hostFqdn: hostsStore.host.hostFqdn
     }
   )
-    formDefaults.formHostName = formHostName.value
-    formDefaults.formHostFqdn = formHostFqdn.value
+    formDefaults.formHostName = hostsStore.host.hostName
+    formDefaults.formHostFqdn = hostsStore.host.hostFqdn
   $q.notify({
     color: 'green-4',
     textColor: 'white',
@@ -74,8 +76,9 @@ function onSubmit() {
 }
 
 function onReset() {
-  formHostName.value = formDefaults.formHostName
-  formHostFqdn.value = formDefaults.formHostFqdn
+  console.log(formDefaults)
+  hostsStore.host.hostName = formDefaults.formHostName
+  hostsStore.host.hostFqdn = formDefaults.formHostFqdn
 }
 
 /**
@@ -92,7 +95,7 @@ function onReset() {
 
 
 <template>
-  <h1>{{hostItem.hostName}} edit page</h1>
+  <h1>{{formDefaults.formHostName}} edit page</h1>
   <q-btn 
     color="primary"
     label="Go back" 
@@ -109,7 +112,7 @@ function onReset() {
       <q-input
         outlined 
         bg-color="white"
-        v-model="formHostName"
+        v-model="hostsStore.host.hostName"
         label="Hostname"
         hint="You can change hostname"
         :rules="[ val => val && val.length > 0 || 'Choose appropriate hostname']"
@@ -118,7 +121,7 @@ function onReset() {
       <q-input
         outlined 
         bg-color="white"
-        v-model="formHostFqdn"
+        v-model="hostsStore.host.hostFqdn"
         label="Fully Qualified Domain Name"
         hint="You can change FQDN"
         lazy-rules
