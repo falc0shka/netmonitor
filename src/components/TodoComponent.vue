@@ -75,7 +75,7 @@ function todoItemChangeStatus(index,newStatus) {
 </script>
 
 <template>
-    <h2>ToDo List module</h2>
+    
     <div><input ref="todoItemInputRef" type="text" v-model.lazy="todoItemInput" placeholder="Input task name" />
     <button @click="todoAddItem">Add task</button>
     </div>

@@ -2,7 +2,8 @@
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import { useHostsStore } from '../stores/HostsStore'
-import HostInfo from '../components/HostInfo.vue'
+import { useServicesStore } from '../stores/ServicesStore'
+
 
 /**
  * Props and Emits
@@ -16,57 +17,12 @@ import HostInfo from '../components/HostInfo.vue'
 const hostsStore = useHostsStore()
 hostsStore.getHosts()
 
+const servicesStore = useServicesStore()
+
 /**
  * Refs and variables
  */
 
-const servicesList = ref([
-  {
-    serviceId: 1,
-    serviceName: 'Monitoring services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 2,
-    serviceName: 'Network services & devices',
-    serviceStatus: true
-  },
-  {
-    serviceId: 3,
-    serviceName: 'VPN service',
-    serviceStatus: true
-  },
-  {
-    serviceId: 4,
-    serviceName: 'AAA services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 5,
-    serviceName: 'Internet access services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 6,
-    serviceName: 'Mail services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 7,
-    serviceName: 'Cisco UC services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 8,
-    serviceName: 'Telephone services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 9,
-    serviceName: 'Wi-Fi services',
-    serviceStatus: true
-  },
-]);
 
 //const defaultFilterStatus = ['true', 'false']
 //const defaultFilterService = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -79,10 +35,9 @@ const activeHost = ref({});
 const displayHostDetails = ref(new Set())
 
 const filteredHostsList = computed(()=>{
-  console.log('computed',hostsStore.hosts)
   return hostsStore.hosts.filter(host=>{
       return (filterStatus.value=='any'||filterStatus.value==host.hostStatus)
-            &&(filterService.value.length===0||filterService.value.some(service=>service==host.serviceId))
+            &&(filterService.value.length===0||filterService.value.some(service=>service==host.hostService))
     }
   )
 });
@@ -130,7 +85,7 @@ function filterReset() {
   <span><input type="radio" id="status-fail" value="false" v-model="filterStatus"><label for="status-fail">FAIL</label></span>
 
   <div>Filter by service:</div>
-  <template v-for="service of servicesList" :key="service.serviceId">
+  <template v-for="service of servicesStore.services" :key="service.serviceId">
     <span>
       <input type="checkbox" :id="`service-${service.serviceId}`" :value="service.serviceId" v-model="filterService">
       <label :for="`service-${service.serviceId}`">{{service.serviceName}}</label>
@@ -159,11 +114,11 @@ function filterReset() {
             Hide details
           </span>     
         </p>
-        <p class="serviceId">{{hostItem.serviceId}}</p>
+        <p class="serviceId">{{hostItem.hostService}}</p>
         <p class="hostStatus">{{hostItem.hostStatus}}</p>
         <div class="break-column"></div>
         <div class="host-details" v-if="displayHostDetails.has(hostItem._id)">
-          <HostInfo v-bind:hostItem="hostItem" />
+          FQDN: {{hostItem.hostFqdn}} IP: {{hostItem.hostIp}}
         </div>
       </div>
     </div> 
@@ -171,8 +126,8 @@ function filterReset() {
 </template>
 
 
-<style scoped>
-.hosts{
+<style scoped lang="scss">
+.hosts {
   width: 100%;
 }
 .row {
@@ -180,19 +135,23 @@ function filterReset() {
   flex-wrap: wrap;
   flex-direction: row;
 }
-.row .hostId,
-.row .hostStatus,
-.row .hostIdTitle,
-.row .hostStatusTitle {
+
+.hostStatus,
+.hostStatusTitle,
+.serviceId,
+.serviceIdTitle {
   flex: 1;
 }
-.row .serviceId,
-.row .serviceIdTitle {
+.hostId,
+.hostIdTitle {
   flex: 2;
 }
 .row .hostName,
 .row .hostNameTitle {
   flex: 3;
+}
+.hostId {
+  word-break: break-all;
 }
 span {
   display: inline-block;
@@ -202,8 +161,5 @@ span {
   border: 1px dotted #aaa;
   width: 100%;
 }
-.break-column {
-  flex-basis: 100%;
-  width: 0;
-}
+
 </style>

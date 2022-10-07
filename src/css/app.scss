@@ -1,3 +1,7 @@
 // app global css in SCSS form
 @import './normalize.css';
 
+.break-column {
+  flex-basis: 100%;
+  width: 0;
+}

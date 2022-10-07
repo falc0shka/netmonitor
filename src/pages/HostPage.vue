@@ -1,6 +1,8 @@
 <script setup>
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
+import { useQuasar } from 'quasar'
+
 import { useHostsStore } from '../stores/HostsStore'
 import { useItemsStore } from '../stores/ItemsStore'
 
@@ -27,26 +29,40 @@ const emit = defineEmits([
 
 const hostsStore = useHostsStore()
 
-hostsStore.getHosts() // refetch hosts
-  .then(()=>hostsStore.getById(props._id)) // find host
-  .catch(e=>console.log(e))
+hostsStore.getHostById(props._id) // find host
+
 
 const itemsStore = useItemsStore()
-itemsStore.getById(props._id)
+
+itemsStore.getItemsByHostId(props._id)
+console.log(itemsStore.items)
 
 /**
  * Refs and variables
  */
+const $q = useQuasar()
 
 const visibility = ref('all')
 
-const filteredItemsList = computed(() => filters[visibility.value](itemsStore.hostItems))
+const filteredItemsList = computed(() => filters[visibility.value](itemsStore.items))
 
 const filters = {
-  all: (itemsList) => itemsStore.hostItems,
-  ok: (itemsList) => itemsStore.hostItems.filter((item) => item.itemStatus == 'true'),
-  fail: (itemsList) => itemsStore.hostItems.filter((item) => item.itemStatus == 'false')
+  all: (itemsList) => itemsList,
+  ok: (itemsList) => itemsList.filter((item) => item.itemStatus == 'true'),
+  fail: (itemsList) => itemsList.filter((item) => item.itemStatus == 'false')
 }
+const formDefaults = { 
+  itemType: '',
+  itemTarget: '',
+}
+const formValues = ref({ 
+  itemType: '',
+  itemTarget: '',
+})
+
+const itemOptions = ref(['ping', 'smtp-check', 'http-check'])
+
+const displayItemGraph = ref(new Set())
 
 /**
  * Remote data fetching
@@ -64,9 +80,11 @@ const filters = {
 
 function onHashChange() {
   const route = window.location.hash.replace(/#\/?/, '')
+  console.log(route)
   if (filters[route]) {
     visibility.value = route
   } else {
+    console.log('test')
     window.location.hash = ''
     visibility.value = 'all'
   }
@@ -74,6 +92,30 @@ function onHashChange() {
 
 window.addEventListener('hashchange', onHashChange)
 onHashChange()
+
+async function onSubmit() {
+  try {
+    await itemsStore.createItem(
+      {
+        itemHost: props._id,
+        ...formValues.value
+      }
+    )
+    await itemsStore.getItemsByHostId(props._id)
+
+    $q.notify({
+      color: 'green-4',
+      textColor: 'white',
+      icon: 'cloud_done',
+      message: 'Item created!'
+    })
+    formValues.value = { ...formDefaults }
+  } catch (e) {console.log(e)}
+}
+
+function onReset() {
+  formValues.value = { ...formDefaults }
+}
 
 /**
  * Lifecycle
@@ -116,7 +158,7 @@ onHashChange()
   </q-card>
 
   <div class="hostitems">
-    <ul class="filters" v-if="itemsStore.hostItems.length">
+    <ul class="filters" v-if="itemsStore.items.length">
       <li>
         <a href="#all" :class="{ selected: visibility === 'all' }">All items</a>
       </li>
@@ -130,23 +172,66 @@ onHashChange()
 
     <div class="items">
       <div class="titles row">
-        <p class="itemIdTitle">itemId</p>
-        <p class="itemTypeIdTitle">itemTypeId</p>
-        <p class="hostIdTitle">hostId</p>
+        <p class="itemTypeTitle">itemType</p>
+        <p class="itemHostTitle">itemHost</p>
         <p class="itemStatusTitle">itemStatus</p>
+        <p class="itemTargetTitle">itemTarget</p>
       </div>
-      <div class="t-body" v-if="itemsStore.hostItems.length">
-        <div class="items row" v-for="item of filteredItemsList" :key="item.itemId">
-          <p class="itemId">{{item.itemId}}</p>
-          <p class="itemTypeId">{{item.itemTypeId}}</p>
-          <p class="hostId">{{item.hostId}}</p>
-          <p class="itemStatus">{{item.itemStatus}}</p>
+      <div class="t-body" v-if="itemsStore.items.length">
+        <div class="items row" v-for="item of filteredItemsList" :key="item._id">
+
+          <p class="itemType">{{item.itemType}}</p>
+          <p class="itemHost">{{item.itemHost}}</p>
+          <p class="itemStatus">{{item.itemStatus}}
+            <span @click="displayItemGraph.add(item._id)" v-if="!displayItemGraph.has(item._id)">
+              Show graph
+            </span>
+            <span @click="displayItemGraph.delete(item._id)" v-if="displayItemGraph.has(item._id)">
+              Hide graph
+            </span>  
+          </p>
+          <p class="itemTarget">{{item.itemTarget}}</p>
+          <div class="break-column"></div>
+            <div class="item-graph" v-if="displayItemGraph.has(item._id)">
+              {{item.itemGraph}}
+            </div>
         </div>
       </div>
       <div class="t-body" v-else>No items to display</div>
     </div> 
   </div>
-
+  <div class="q-pa-md" style="max-width: 400px">
+    <q-form
+      @submit.prevent="onSubmit"
+      @reset="onReset"
+      class="q-gutter-md"
+    >
+      <q-select 
+        outlined
+        lazy-rules="ondemand"
+        bg-color="white"  
+        v-model="formValues.itemType"
+        label="Select item type *"
+        hint="You must choose item type"
+        :options="itemOptions"
+        :rules="[ val => val && val.length > 0 || 'Please, choose type of the item']"
+      />
+      <q-input
+        outlined
+        lazy-rules="ondemand"
+        bg-color="white"
+        v-model="formValues.itemTarget"
+        label="Target expression *"
+        hint="You must type host's IP address"
+        :rules="[ val => val && val.length > 0 || 'Please, type item\'s target expression']"
+      />
+      
+      <div>
+        <q-btn label="Submit" type="submit" color="primary"/>
+        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+      </div>
+    </q-form>
+  </div>
 </template>
 
 
@@ -161,5 +246,9 @@ div.row p {
 .filters li {
   display: inline-block;
   padding: 10px;
+}
+.item-graph {
+  border: 1px dotted #aaa;
+  width: 100%;
 }
 </style>

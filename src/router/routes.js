@@ -27,7 +27,7 @@ const routes = [
         component: ()=>import('../pages/HostPage.vue'),
         props: route => ({...route.params}),
         beforeEnter(to,from) {
-          console.log(to)
+          //console.log(to)
         }
       },
       {
@@ -49,19 +49,31 @@ const routes = [
           }
         }
       },
-
+      {
+        path: '/admin',
+        name: 'admin',
+        component: ()=>import('../pages/AdminPage.vue'),
+        // children: [
+        //   {
+        //     path: ':id',
+        //     name: 'host.page',
+        //     component: ()=>import('../components/HostPage.vue'),
+        //     props: route => ({...route.params})
+        //   }
+        // ]
     
+      },
     ]
   },
     
-  {
-    path: '/:pathmatch(.*)*',
-    name: 'notfound',
-    component: ()=>import('../components/tech/NotFoundComponent.vue'),
-    beforeEnter(to,from) {
-      //console.log(from,to)
-    }
-  },
+  // {
+  //   path: '/:pathmatch(.*)*',
+  //   name: 'notfound',
+  //   component: ()=>import('../components/tech/NotFoundComponent.vue'),
+  //   beforeEnter(to,from) {
+  //     //console.log(from,to)
+  //   }
+  // },
 
   // Always leave this as last one,
   // but you can also remove it

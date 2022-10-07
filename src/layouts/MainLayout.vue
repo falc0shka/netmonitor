@@ -2,16 +2,17 @@
   <q-layout view="lHh Lpr lFf" class="bg-grey-4">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
+        <!-- <q-btn
           flat
           dense
           round
           icon="menu"
           aria-label="Menu"
           @click="toggleLeftDrawer"
-        />
-
+        /> -->
+        <q-icon class="fa-solid fa-network-wired" size="2em"/>
         <q-toolbar-title>
+          
           Netmonitor v0.0.1 (by falc0shka)
         </q-toolbar-title>
 
@@ -20,7 +21,7 @@
       <q-tabs align="center">
         <q-route-tab to="/" label="Dashboard" exact />
         <q-route-tab :to="{name: 'hosts'}" label="Hosts" />
-        <q-route-tab to="/admin" label="Admin" />
+        <q-route-tab to="/admin" label="Administration" />
       </q-tabs>
     </q-header>
 
