@@ -6,7 +6,7 @@ import ErrorComponent from '../components/tech/ErrorComponent.vue'
 
 import Services from '../components/ServicesComponent.vue'
 
-import { useCounterStore } from '../stores/CounterStore'
+import { useMainStore } from '../stores/MainStore'
 
 
 /**
@@ -21,10 +21,16 @@ const emit = defineEmits([
 
 ]);
 
+/**
+ * State
+ */
+
+ const mainStore = useMainStore()
 
 /**
  * Refs and variables
  */
+
 let temp = new Date()
 temp.setHours(temp.getHours()-2)
 const lastUpdateTime = ref(temp)
@@ -88,18 +94,24 @@ const TodoAsyncComp = defineAsyncComponent({
     <div class="col-xs-12 col-sm-12 col-md-6">
       <!-- Current status -->
       <q-card class="my-content current-status">
-        <h2>Current status  <span>GOOD</span></h2>
+        
+        <h2>
+          Current status
+          <q-icon name="check_circle" size="2em" color="positive" v-if="mainStore.mainStatus == true"/>
+          <q-icon name="warning" size="2em" color="negative" v-else />
+        </h2>
         <h3>Last update from server</h3>
-        {{lastUpdateTime.toLocaleString('ru-RU')}}
+        <p>{{lastUpdateTime.toLocaleString('ru-RU')}}</p>
+        <p>{{mainStore.lastUpdate}}</p>
         <h3>Alerts count</h3>
         <h3>Device count</h3>
       </q-card>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
+    <div class="col-xs-12 col-sm-12 col-md-6">
       <q-card class="my-content">
-        <!-- Toto module -->
-        <h2>ToDo List module</h2>
-        <TodoAsyncComp />
+        <!-- Services module -->
+        <h2>Services</h2>
+        <Services />
       </q-card>
     </div>
   </div>
@@ -109,11 +121,11 @@ const TodoAsyncComp = defineAsyncComponent({
         <h2>Alerts</h2>
       </q-card>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-6">
+    <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
       <q-card class="my-content">
-        <!-- Services module -->
-        <h2>Servises</h2>
-        <Services />
+        <!-- Toto module -->
+        <h2>ToDo List module</h2>
+        <TodoAsyncComp />
       </q-card>
     </div>
   </div>
@@ -130,6 +142,6 @@ const TodoAsyncComp = defineAsyncComponent({
 // }
 .my-content {
   height: 100%;
-  padding: 10px 15px;
+  padding: 20px 20px;
 }
 </style>

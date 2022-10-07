@@ -1,65 +1,38 @@
 <script setup>
   
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
+import { useServicesStore } from '../stores/ServicesStore'
 
 
 /**
  * Props and Emits
  */
 
+/**
+ * State
+ */
+
+const servicesStore = useServicesStore()
 
 /**
  * Refs and variables
  */
-
-const servicesList = ref([
+const servicesColumns = [
   {
-    serviceId: 1,
-    serviceName: 'Monitoring services',
-    serviceStatus: true
+    name: 'serviceName',
+    label: 'Service name',
+    field: 'serviceName',
+    sortable: true,
+    align: 'left',
   },
   {
-    serviceId: 2,
-    serviceName: 'Network services & devices',
-    serviceStatus: true
+    name: 'serviceStatus',
+    label: 'Status',
+    field: 'serviceStatus',
+    sortable: true,
+    align: 'left',
   },
-  {
-    serviceId: 3,
-    serviceName: 'VPN service',
-    serviceStatus: true
-  },
-  {
-    serviceId: 4,
-    serviceName: 'AAA services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 5,
-    serviceName: 'Internet access services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 6,
-    serviceName: 'Mail services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 7,
-    serviceName: 'Cisco UC services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 8,
-    serviceName: 'Telephone services',
-    serviceStatus: true
-  },
-  {
-    serviceId: 9,
-    serviceName: 'Wi-Fi services',
-    serviceStatus: true
-  },
-]);
-
+]
 /**
  * Remote data fetching
  */
@@ -90,34 +63,41 @@ const servicesList = ref([
 
 <template>
   <div class="services">
-    <div class="titles row">
-      <p class="serviceId">serviceId</p>
-      <p class="serviceName">serviceName</p>
-      <p class="serviceStatus">serviceStatus</p>
-    </div>
-    <div class="t-body">
-      <div class="items row" v-for="serviceItem of servicesList" :key="serviceItem.serviceId">
-        <p class="serviceId">{{serviceItem.serviceId}}&nbsp;</p>
-        <p class="serviceName">{{serviceItem.serviceName}}&nbsp;</p>
-        <p class="serviceStatus">{{serviceItem.serviceStatus}}&nbsp;</p>
-      </div>
-    </div>
+
+    <!-- <q-table
+      table-header-class="text-h2"
+      :rows="servicesStore.services"
+      :columns="servicesColumns"
+      row-key="name"
+      hide-bottom
+    /> -->
+
+    <table class="services-table">
+      <thead>
+        <tr class="text-h4 text-left">
+          <th>Service name</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="items text-h6 text-left" v-for="serviceItem of servicesStore.services" :key="serviceItem.serviceId">
+          <td class="serviceName">{{serviceItem.serviceName}}&nbsp;</td>
+          <td class="serviceStatus">
+            <q-icon name="check_circle" size="1em" color="positive" v-if="serviceItem.serviceStatus == true"/>
+            <q-icon name="warning" size="2em" color="negative" v-else />
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 
 <style scoped>
-div.services{
+
+.services-table {
+  table-layout: auto;
   width: 100%;
 }
-div.row {
-  display: flex;
-  flex-direction: row;
-}
-div.row .serviceId, div.row .serviceStatus {
-  flex: 1;
-}
-div.row .serviceName {
-  flex: 3;
-}
+
 </style>

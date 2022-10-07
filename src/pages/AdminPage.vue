@@ -58,7 +58,7 @@ for (let service of servicesStore.services) {
       }
     )
 }
-console.log(serviceOptions)
+
 /**
  * Remote data fetching
  */
@@ -108,40 +108,45 @@ function onReset() {
 
 
 <template>
-  <h1>Admin page</h1> 
+  <h1>Create host</h1> 
 
-  <q-btn 
+  <!-- <q-btn 
     color="primary"
     label="Go back" 
     @click="$router.back()"
     class="q-ma-sm"
-  />
+  /> -->
 
   <div class="q-pa-md" style="max-width: 400px">
-    <h2>Create host</h2>
+
     <q-form
       @submit.prevent="onSubmit"
       @reset="onReset"
       class="q-gutter-md"
     >
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
+        lazy-rules="ondemand"
         v-model="formValues.hostName"
         label="Hostname *"
         hint="You must choose hostname"
         :rules="[ val => val && val.length > 0 || 'Choose unique hostname']"
       />
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
         v-model="formValues.hostFqdn"
         label="Fully Qualified Domain Name"
         hint="You can choose FQDN"
       />
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
+        lazy-rules="ondemand"
         v-model="formValues.hostIp"
         label="Host IP *"
         hint="You must type host's IP address"
@@ -151,7 +156,9 @@ function onReset() {
         outlined
         emit-value
         map-options
-        bg-color="white"  
+        dense
+        bg-color="white"
+        lazy-rules="ondemand" 
         v-model="formValues.hostService"
         label="Service type *"
         hint="You must choose service type"
@@ -160,7 +167,8 @@ function onReset() {
       />
 
       <q-input
-        outlined 
+        outlined
+        dense 
         bg-color="white"
         v-model="formValues.hostCluster"
         label="Cluster ID"
@@ -168,6 +176,7 @@ function onReset() {
       />
       <q-input
         outlined
+        dense
         bg-color="white"
         type="textarea"
         v-model="formValues.hostNote"
@@ -176,8 +185,8 @@ function onReset() {
       />
 
       <div>
-        <q-btn label="Submit" type="submit" color="primary"/>
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+        <q-btn label="Create" type="submit" color="primary"  />
+        <q-btn label="Reset form" type="reset" color="primary" flat class="q-ml-sm" dense />
       </div>
     </q-form>
   </div>

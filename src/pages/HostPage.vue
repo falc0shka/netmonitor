@@ -64,6 +64,8 @@ const itemOptions = ref(['ping', 'smtp-check', 'http-check'])
 
 const displayItemGraph = ref(new Set())
 
+const itemCreateDialog = ref(false)
+
 /**
  * Remote data fetching
  */
@@ -115,6 +117,35 @@ async function onSubmit() {
 
 function onReset() {
   formValues.value = { ...formDefaults }
+}
+
+function deleteItem(hostId, itemId) {
+  $q.dialog({
+    title: 'Confirm deletion',
+    message: 'Would you like to delete this item?',
+    cancel: true,
+    persistent: true
+  })
+  .onOk(async () => {
+    //console.log('>>>> OK')
+    await itemsStore.deleteItem(itemId)
+    await itemsStore.getItemsByHostId(hostId)
+    $q.notify({
+        color: 'green-4',
+        textColor: 'white',
+        icon: 'cloud_done',
+        message: 'Item was deleted!'
+      })
+  })
+  .onOk(() => {
+    //console.log('>>>> second OK catcher')
+  })
+  .onCancel(() => {
+    //console.log('>>>> Cancel')
+  })
+  .onDismiss(() => {
+    //console.log('I am triggered on both OK and Cancel')
+  })
 }
 
 /**
@@ -170,67 +201,74 @@ function onReset() {
       </li>
     </ul> 
 
-    <div class="items">
-      <div class="titles row">
-        <p class="itemTypeTitle">itemType</p>
-        <p class="itemHostTitle">itemHost</p>
-        <p class="itemStatusTitle">itemStatus</p>
-        <p class="itemTargetTitle">itemTarget</p>
-      </div>
-      <div class="t-body" v-if="itemsStore.items.length">
-        <div class="items row" v-for="item of filteredItemsList" :key="item._id">
-
-          <p class="itemType">{{item.itemType}}</p>
-          <p class="itemHost">{{item.itemHost}}</p>
-          <p class="itemStatus">{{item.itemStatus}}
-            <span @click="displayItemGraph.add(item._id)" v-if="!displayItemGraph.has(item._id)">
-              Show graph
-            </span>
-            <span @click="displayItemGraph.delete(item._id)" v-if="displayItemGraph.has(item._id)">
-              Hide graph
-            </span>  
-          </p>
-          <p class="itemTarget">{{item.itemTarget}}</p>
-          <div class="break-column"></div>
-            <div class="item-graph" v-if="displayItemGraph.has(item._id)">
-              {{item.itemGraph}}
-            </div>
-        </div>
-      </div>
-      <div class="t-body" v-else>No items to display</div>
-    </div> 
-  </div>
-  <div class="q-pa-md" style="max-width: 400px">
-    <q-form
-      @submit.prevent="onSubmit"
-      @reset="onReset"
-      class="q-gutter-md"
-    >
-      <q-select 
-        outlined
-        lazy-rules="ondemand"
-        bg-color="white"  
-        v-model="formValues.itemType"
-        label="Select item type *"
-        hint="You must choose item type"
-        :options="itemOptions"
-        :rules="[ val => val && val.length > 0 || 'Please, choose type of the item']"
-      />
-      <q-input
-        outlined
-        lazy-rules="ondemand"
-        bg-color="white"
-        v-model="formValues.itemTarget"
-        label="Target expression *"
-        hint="You must type host's IP address"
-        :rules="[ val => val && val.length > 0 || 'Please, type item\'s target expression']"
-      />
+    <div class="items" v-if="itemsStore.items.length">
+      <q-card class="q-pa-md q-ma-sm" v-for="item of filteredItemsList" :key="item._id">
+        <p class="itemType">itemType: {{item.itemType}}</p>
+        <p class="itemHost">itemHost: {{item.itemHost}}</p>
+        <p class="itemStatus">{{item.itemStatus}}
+          <span @click="displayItemGraph.add(item._id)" v-if="!displayItemGraph.has(item._id)">
+            Show graph
+          </span>
+          <span @click="displayItemGraph.delete(item._id)" v-if="displayItemGraph.has(item._id)">
+            Hide graph
+          </span>  
+        </p>
+        <p class="itemTarget">itemTarget: {{item.itemTarget}}</p>
+        <q-btn label="Delete item" color="negative" @click="deleteItem(_id, item._id)" dense />
+        <div class="item-graph" v-if="displayItemGraph.has(item._id)">{{item.itemGraph}}</div>
+      </q-card>
       
-      <div>
-        <q-btn label="Submit" type="submit" color="primary"/>
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-      </div>
-    </q-form>
+      
+    </div>
+    <div class="items" v-else>No items to display</div>
+  </div>
+  <q-btn label="Add new item" color="primary" align="right" @click="itemCreateDialog = true" />
+
+
+  <q-dialog v-model="itemCreateDialog" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <h2>Create new item</h2>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form
+            @submit.prevent="onSubmit"
+            @reset="onReset"
+            class="q-gutter-md"
+          >
+            <q-select 
+              outlined
+              lazy-rules="ondemand"
+              bg-color="white"  
+              v-model="formValues.itemType"
+              label="Select item type *"
+              hint="You must choose item type"
+              :options="itemOptions"
+              :rules="[ val => val && val.length > 0 || 'Please, choose type of the item']"
+            />
+            <q-input
+              outlined
+              lazy-rules="ondemand"
+              bg-color="white"
+              v-model="formValues.itemTarget"
+              label="Target expression *"
+              hint="Type target expression"
+              :rules="[ val => val && val.length > 0 || 'Please, type item\'s target expression']"
+            />
+            
+            <div>
+              <q-btn label="Add item" type="submit" color="primary" v-close-popup />
+              <q-btn label="Cancel" type="reset" color="primary" flat class="q-ml-sm" v-close-popup />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+
+  <div class="q-pa-md" style="max-width: 400px">
+    
   </div>
 </template>
 
@@ -248,7 +286,7 @@ div.row p {
   padding: 10px;
 }
 .item-graph {
-  border: 1px dotted #aaa;
-  width: 100%;
+  margin: 20px 20px;
+  border: 1px dotted #aaa !important;
 }
 </style>

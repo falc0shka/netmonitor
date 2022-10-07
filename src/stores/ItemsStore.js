@@ -19,6 +19,11 @@ export const useItemsStore = defineStore('items', {
             }
           )
     },
+    async deleteItem(id) {
+      await axios.delete(
+        `http://10.0.0.87:3000/v1/items/${id}`
+      ) 
+    }
   }
 }
 )

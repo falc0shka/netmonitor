@@ -10,7 +10,7 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         /> -->
-        <q-icon class="fa-solid fa-network-wired" size="2em"/>
+        <q-icon name="fa-solid fa-network-wired" size="2em"/>
         <q-toolbar-title>
           
           Netmonitor v0.0.1 (by falc0shka)
@@ -21,7 +21,7 @@
       <q-tabs align="center">
         <q-route-tab to="/" label="Dashboard" exact />
         <q-route-tab :to="{name: 'hosts'}" label="Hosts" />
-        <q-route-tab to="/admin" label="Administration" />
+        <q-route-tab to="/admin" label="Create host" />
       </q-tabs>
     </q-header>
 

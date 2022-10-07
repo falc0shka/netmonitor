@@ -3,6 +3,7 @@
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import { useHostsStore } from '../stores/HostsStore'
 import { useServicesStore } from '../stores/ServicesStore'
+import { useQuasar } from 'quasar'
 
 
 /**
@@ -23,14 +24,15 @@ const servicesStore = useServicesStore()
  * Refs and variables
  */
 
+ const $q = useQuasar()
 
 //const defaultFilterStatus = ['true', 'false']
 //const defaultFilterService = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-const filterStatus = ref('any');
-const filterService = ref([]);
+const filterStatus = ref('any')
+const filterService = ref([])
 
-const activeHost = ref({});
+const activeHost = ref({})
 
 const displayHostDetails = ref(new Set())
 
@@ -60,6 +62,38 @@ const filteredHostsList = computed(()=>{
 function filterReset() {
   filterStatus.value = 'any';
   filterService.value = [];
+}
+
+
+
+
+function deleteHost(id) {
+  $q.dialog({
+    title: 'Confirm deletion',
+    message: 'Would you like to delete this host from database?',
+    cancel: true,
+    persistent: true
+  })
+  .onOk(async () => {
+    //console.log('>>>> OK')
+    await hostsStore.deleteHost(id)
+    await hostsStore.getHosts()
+    $q.notify({
+        color: 'green-4',
+        textColor: 'white',
+        icon: 'cloud_done',
+        message: 'Host was deleted!'
+      })
+  })
+  .onOk(() => {
+    //console.log('>>>> second OK catcher')
+  })
+  .onCancel(() => {
+    //console.log('>>>> Cancel')
+  })
+  .onDismiss(() => {
+    //console.log('I am triggered on both OK and Cancel')
+  })
 }
 
 /**
@@ -102,7 +136,10 @@ function filterReset() {
     </div>
     <div class="t-body">
       <div class="items row" v-for="hostItem of filteredHostsList" :key="hostItem._id">
-        <p class="hostId">{{hostItem._id}}</p>
+        <p class="hostId">
+          {{hostItem._id}}<br>
+          <q-btn label="Delete host" color="negative" @click="deleteHost(hostItem._id)" dense />
+        </p>
         <p class="hostName">
           <router-link :to="{name: 'host.page', params: {_id: hostItem._id}}">
             {{hostItem.hostName}}

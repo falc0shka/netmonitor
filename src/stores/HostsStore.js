@@ -18,13 +18,12 @@ export const useHostsStore = defineStore('hosts', {
         this.host = (await axios.get(`http://10.0.0.87:3000/v1/hosts/${id}`)).data
     },
     async createHost(values) {
-      console.log(values)
-        await axios.post(
-          `http://10.0.0.87:3000/v1/hosts`,
-          {
-            ...values,
-          }
-        ) 
+      await axios.post(
+        `http://10.0.0.87:3000/v1/hosts`,
+        {
+          ...values,
+        }
+      ) 
     },
     async updateHost(id, values) {
       this.host = (await axios.put(
@@ -35,6 +34,11 @@ export const useHostsStore = defineStore('hosts', {
           }
         ) 
       ).data
+    },
+    async deleteHost(id) {
+      await axios.delete(
+        `http://10.0.0.87:3000/v1/hosts/${id}`
+      ) 
     }
   }
 }
