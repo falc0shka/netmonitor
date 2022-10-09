@@ -5,6 +5,7 @@ import { useQuasar } from 'quasar'
 
 import { useHostsStore } from '../stores/HostsStore'
 import { useItemsStore } from '../stores/ItemsStore'
+import ItemGraphComponent from 'src/components/ItemGraphComponent.vue';
 
 
 /**
@@ -65,6 +66,8 @@ const itemOptions = ref(['ping', 'smtp-check', 'http-check'])
 const displayItemGraph = ref(new Set())
 
 const itemCreateDialog = ref(false)
+
+const itemGraph = ref(null)
 
 /**
  * Remote data fetching
@@ -203,19 +206,21 @@ function deleteItem(hostId, itemId) {
 
     <div class="items" v-if="itemsStore.items.length">
       <q-card class="q-pa-md q-ma-sm" v-for="item of filteredItemsList" :key="item._id">
-        <p class="itemType">itemType: {{item.itemType}}</p>
-        <p class="itemHost">itemHost: {{item.itemHost}}</p>
-        <p class="itemStatus">{{item.itemStatus}}
-          <span @click="displayItemGraph.add(item._id)" v-if="!displayItemGraph.has(item._id)">
-            Show graph
-          </span>
-          <span @click="displayItemGraph.delete(item._id)" v-if="displayItemGraph.has(item._id)">
-            Hide graph
-          </span>  
-        </p>
-        <p class="itemTarget">itemTarget: {{item.itemTarget}}</p>
-        <q-btn label="Delete item" color="negative" @click="deleteItem(_id, item._id)" dense />
-        <div class="item-graph" v-if="displayItemGraph.has(item._id)">{{item.itemGraph}}</div>
+        <h2 class="itemType">{{item.itemType}}
+          <q-icon name="check_circle" size="1em" color="positive" v-if="item.itemStatus == true"/>
+          <q-icon name="warning" size="1em" color="negative" v-else />
+        </h2>
+        <!-- <p class="itemHost">itemHost: {{item.itemHost}}</p> -->
+        <p class="itemTarget"><strong>Target expression:</strong> {{item.itemTarget}}</p>
+        <q-btn label="Show graph" color="dark" @click="displayItemGraph.add(item._id)" v-if="!displayItemGraph.has(item._id)" dense />
+        <q-btn label="Hide graph" color="dark" @click="displayItemGraph.delete(item._id)" v-if="displayItemGraph.has(item._id)" dense />
+        <div class="item-graph" v-if="displayItemGraph.has(item._id)">
+          <item-graph-component :_id="hostsStore.host._id"/>
+        </div>
+        <q-card-actions align="right">
+          <q-btn label="Delete item" color="negative" @click="deleteItem(_id, item._id)" dense />
+        </q-card-actions>
+        
       </q-card>
       
       
@@ -287,6 +292,5 @@ div.row p {
 }
 .item-graph {
   margin: 20px 20px;
-  border: 1px dotted #aaa !important;
 }
 </style>

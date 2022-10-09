@@ -119,6 +119,7 @@ const TodoAsyncComp = defineAsyncComponent({
     <div class="col-xs-12 col-sm-12 col-md-6">
       <q-card class="my-content">
         <h2>Alerts</h2>
+        <p>Under construction</p>
       </q-card>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">

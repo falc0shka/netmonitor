@@ -156,6 +156,7 @@ function onReset() {
         outlined
         emit-value
         map-options
+        options-cover
         dense
         bg-color="white"
         lazy-rules="ondemand" 

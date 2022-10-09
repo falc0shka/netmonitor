@@ -17,22 +17,8 @@ const servicesStore = useServicesStore()
 /**
  * Refs and variables
  */
-const servicesColumns = [
-  {
-    name: 'serviceName',
-    label: 'Service name',
-    field: 'serviceName',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'serviceStatus',
-    label: 'Status',
-    field: 'serviceStatus',
-    sortable: true,
-    align: 'left',
-  },
-]
+
+
 /**
  * Remote data fetching
  */

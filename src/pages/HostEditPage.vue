@@ -2,6 +2,8 @@
 
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import { useHostsStore } from '../stores/HostsStore'
+import { useServicesStore } from '../stores/ServicesStore'
+
 import { useQuasar } from 'quasar'
 import { store } from 'quasar/wrappers';
 import { storeToRefs } from 'pinia';
@@ -22,12 +24,6 @@ const emit = defineEmits([
 ]);
 
 /**
- * Refs and variables
- */
-
-const $q = useQuasar()
-
-/**
  * State
  */
 
@@ -39,6 +35,25 @@ hostsStore.getHostById(props._id)           // find host
     formDefaults.value = { ...hostsStore.host}
   })
   .catch(e=>console.log(e))
+
+const servicesStore = useServicesStore()
+console.log(servicesStore)
+
+/**
+ * Refs and variables
+ */
+
+const $q = useQuasar()
+
+let serviceOptions = [];
+for (let service of servicesStore.services) {
+    serviceOptions.push(
+      {
+        label: service.serviceName,
+        value: service.serviceId
+      }
+    )
+}
 
 /**
  * Remote data fetching
@@ -105,7 +120,8 @@ function onReset() {
       class="q-gutter-md"
     >
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
         v-model="hostsStore.host.hostName"
         label="Hostname *"
@@ -113,29 +129,40 @@ function onReset() {
         :rules="[ val => val && val.length > 0 || 'Choose unique hostname']"
       />
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
         v-model="hostsStore.host.hostFqdn"
         label="Fully Qualified Domain Name"
         hint="You can choose FQDN"
       />
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
         v-model="hostsStore.host.hostIp"
         label="Host IP *"
         hint="You must type host's IP address"
         :rules="[ val => val && val.length > 0 || 'Choose appropriate IP address for this host']"
       />
-      <q-input
-        outlined 
+      
+      <q-select 
+        outlined
+        emit-value
+        map-options
+        options-cover
+        dense
         bg-color="white"
+        lazy-rules="ondemand" 
         v-model="hostsStore.host.hostService"
-        label="Service ID"
-        hint="You can choose Service ID"
+        label="Service type *"
+        hint="You can choose service type"
+        :options="serviceOptions"
+        :rules="[ val => val && val.length >= 0 || 'Please, choose service type']"
       />
       <q-input
-        outlined 
+        outlined
+        dense
         bg-color="white"
         v-model="hostsStore.host.hostCluster"
         label="Cluster ID"
@@ -143,6 +170,7 @@ function onReset() {
       />
       <q-input
         outlined
+        dense
         bg-color="white"
         type="textarea"
         v-model="hostsStore.host.hostNote"
