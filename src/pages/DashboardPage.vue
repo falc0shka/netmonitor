@@ -1,11 +1,13 @@
 <script setup>
 
-import { ref, provide, readonly, defineAsyncComponent } from 'vue'
+import { ref, provide, readonly, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import LoadingComponent from '../components/tech/LoadingComponent.vue'
 import ErrorComponent from '../components/tech/ErrorComponent.vue'
 
 import Services from '../components/ServicesComponent.vue'
 
+import { useHostsStore } from '../stores/HostsStore'
+import { useServicesStore } from '../stores/ServicesStore'
 import { useMainStore } from '../stores/MainStore'
 
 
@@ -25,17 +27,21 @@ const emit = defineEmits([
  * State
  */
 
- const mainStore = useMainStore()
+const mainStore = useMainStore()
+
+const hostsStore = useHostsStore()
+console.log('Start getting hosts!')
+hostsStore.getHosts()
 
 /**
  * Refs and variables
  */
 
-let temp = new Date()
-temp.setHours(temp.getHours()-2)
-const lastUpdateTime = ref(temp)
-
 const testMesssage = ref('it\'s "provide"-feature testing!')
+
+const autoUpdate = ref('ON')
+
+const autoUpdateRef = ref(null)
 
 /**
  * Remote data fetching
@@ -46,6 +52,17 @@ const testMesssage = ref('it\'s "provide"-feature testing!')
  * Watchers
  */
 
+watch(autoUpdate, (newValue) => {
+  if (newValue === 'OFF') {
+    clearInterval(autoUpdateRef.value)
+  }
+  else {
+    autoUpdateRef.value = setInterval(() => {
+      hostsStore.getHosts()
+    }, 10000)
+  }
+  console.log(`Auto-fetching data is ${newValue} now`)
+})
 
 /**
  * Methods
@@ -55,8 +72,16 @@ const testMesssage = ref('it\'s "provide"-feature testing!')
 /**
  * Lifecycle
  */
-
-
+onMounted(()=> {
+  console.log('Mounted!')
+  autoUpdateRef.value = setInterval(() => {
+    hostsStore.getHosts()
+  }, 10000)
+})
+onUnmounted(()=>{
+  clearInterval(autoUpdateRef.value)
+  console.log('Unmounnted!')
+})
 /**
  * Todo module loader
  */
@@ -88,44 +113,50 @@ const TodoAsyncComp = defineAsyncComponent({
 </script>
 
 <template>
-  <h1>Dashboard</h1>
+  <h1 class="q-ma-sm">Dashboard</h1>
 
-  <div class="fit row q-col-gutter-sm q-mt-sm">
+  <div class="fit row q-col-gutter-sm q-pa-sm">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <!-- Current status -->
       <q-card class="my-content current-status">
         
-        <h2>
+        <h2 class="q-my-sm">
           Current status
           <q-icon name="check_circle" size="2em" color="positive" v-if="mainStore.mainStatus == true"/>
           <q-icon name="warning" size="2em" color="negative" v-else />
         </h2>
         <h3>Last update from server</h3>
-        <p>{{lastUpdateTime.toLocaleString('ru-RU')}}</p>
         <p>{{mainStore.lastUpdate}}</p>
-        <h3>Alerts count</h3>
-        <h3>Device count</h3>
+        <q-toggle
+          false-value="OFF"
+          :label="`Auto update is ${autoUpdate}`"
+          true-value="ON"
+          color="primary"
+          v-model="autoUpdate"
+        />
+        <!-- <h3>Alerts count</h3>
+        <h3>Device count</h3> -->
       </q-card>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6">
       <q-card class="my-content">
         <!-- Services module -->
-        <h2>Services</h2>
+        <h2 class="q-my-sm">Services</h2>
         <Services />
       </q-card>
     </div>
   </div>
-  <div class="fit row q-col-gutter-sm q-mt-sm">
+  <div class="fit row q-col-gutter-sm q-pa-sm">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <q-card class="my-content">
-        <h2>Alerts</h2>
+        <h2 class="q-my-sm">Alerts</h2>
         <p>Under construction</p>
       </q-card>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
       <q-card class="my-content">
         <!-- Toto module -->
-        <h2>ToDo List module</h2>
+        <h2 class="q-my-sm">ToDo List module</h2>
         <TodoAsyncComp />
       </q-card>
     </div>

@@ -62,15 +62,15 @@ const servicesStore = useServicesStore()
       <thead>
         <tr class="text-h4 text-left">
           <th>Service name</th>
-          <th>Status</th>
+          <th class="text-center">Status</th>
         </tr>
       </thead>
       <tbody>
         <tr class="items text-h6 text-left" v-for="serviceItem of servicesStore.services" :key="serviceItem.serviceId">
           <td class="serviceName">{{serviceItem.serviceName}}&nbsp;</td>
-          <td class="serviceStatus">
-            <q-icon name="check_circle" size="1em" color="positive" v-if="serviceItem.serviceStatus == true"/>
-            <q-icon name="warning" size="2em" color="negative" v-else />
+          <td class="serviceStatus text-center">
+            <q-icon name="check_circle" size="1em" color="positive" v-if="serviceItem.serviceStatus === 'true'"/>
+            <q-icon name="warning" size="1em" color="negative" v-else />
           </td>
         </tr>
       </tbody>

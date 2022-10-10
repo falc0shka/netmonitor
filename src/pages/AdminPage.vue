@@ -108,7 +108,7 @@ function onReset() {
 
 
 <template>
-  <h1>Create host</h1> 
+  <h1 class="q-ma-sm">Create host</h1> 
 
   <!-- <q-btn 
     color="primary"
@@ -117,7 +117,7 @@ function onReset() {
     class="q-ma-sm"
   /> -->
 
-  <div class="q-pa-md" style="max-width: 400px">
+  <div class="q-pt-sm q-ma-sm" style="max-width: 400px">
 
     <q-form
       @submit.prevent="onSubmit"
@@ -186,7 +186,7 @@ function onReset() {
       />
 
       <div>
-        <q-btn label="Create" type="submit" color="primary"  />
+        <q-btn label="Create host" type="submit" color="primary"  />
         <q-btn label="Reset form" type="reset" color="primary" flat class="q-ml-sm" dense />
       </div>
     </q-form>

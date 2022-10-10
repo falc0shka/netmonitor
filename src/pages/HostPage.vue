@@ -165,14 +165,16 @@ function deleteItem(hostId, itemId) {
 
 
 <template>
-  <h1>{{hostsStore.host.hostName}}</h1>
-  <q-btn 
+  <h1 class="q-ma-sm">{{hostsStore.host.hostName}}</h1>
+  <q-btn
+    
     color="primary"
     label="Back to hosts list" 
     :to="{name: 'hosts'}"
     class="q-ma-sm"
   />
   <q-btn 
+    
     color="primary"
     label="Edit host settings" 
     :to="{name: 'host.edit', params: {_id: _id}}"
@@ -180,7 +182,7 @@ function deleteItem(hostId, itemId) {
   />
 
 
-  <q-card class="q-pa-md">
+  <q-card class="q-pa-md q-ma-sm">
     <p>Host ID: {{hostsStore.host._id}}</p>
     <p>Host name: {{hostsStore.host.hostName}}</p>
     <p>Host FQDN: {{hostsStore.host.hostFqdn}}</p>
@@ -192,20 +194,15 @@ function deleteItem(hostId, itemId) {
   </q-card>
 
   <div class="hostitems">
-    <ul class="filters" v-if="itemsStore.items.length">
-      <li>
-        <a href="#all" :class="{ selected: visibility === 'all' }">All items</a>
-      </li>
-      <li>
-        <a href="#ok" :class="{ selected: visibility === 'true' }">OK</a>
-      </li>
-      <li>
-        <a href="#fail" :class="{ selected: visibility === 'false' }">FAIL</a>
-      </li>
-    </ul> 
 
-    <div class="items" v-if="itemsStore.items.length">
-      <q-card class="q-pa-md q-ma-sm" v-for="item of filteredItemsList" :key="item._id">
+    <div class="items q-ma-sm" v-if="itemsStore.items.length">  
+      <q-btn-group v-if="itemsStore.items.length" color="primary" glossy>
+        <q-btn href="#all" label="All items" :color="visibility === 'all'?'secondary':'primary'" />
+        <q-btn href="#ok" label="Only OK" :color="visibility === 'ok'?'secondary':'primary'" />
+        <q-btn href="#fail" label="Only FAIL" :color="visibility === 'fail'?'secondary':'primary'"/>
+      </q-btn-group>
+      <div class="items q-mt-sm" v-if="!filteredItemsList.length">No items found matching the specified filter</div>
+      <q-card class="q-pa-md q-mt-sm" v-for="item of filteredItemsList" :key="item._id">
         <h2 class="itemType">{{item.itemType}}
           <q-icon name="check_circle" size="1em" color="positive" v-if="item.itemStatus == true"/>
           <q-icon name="warning" size="1em" color="negative" v-else />
@@ -227,7 +224,7 @@ function deleteItem(hostId, itemId) {
     </div>
     <div class="items" v-else>No items to display</div>
   </div>
-  <q-btn label="Add new item" color="primary" align="right" @click="itemCreateDialog = true" />
+  <q-btn label="Add new item" color="primary" align="right" @click="itemCreateDialog = true" class="q-ma-sm" />
 
 
   <q-dialog v-model="itemCreateDialog" persistent>
@@ -238,7 +235,7 @@ function deleteItem(hostId, itemId) {
 
         <q-card-section class="q-pt-none">
           <q-form
-            @submit.prevent="onSubmit"
+            @submit.stop.prevent="onSubmit"
             @reset="onReset"
             class="q-gutter-md"
           >
@@ -263,7 +260,7 @@ function deleteItem(hostId, itemId) {
             />
             
             <div>
-              <q-btn label="Add item" type="submit" color="primary" v-close-popup />
+              <q-btn label="Add item" type="submit" color="primary" />
               <q-btn label="Cancel" type="reset" color="primary" flat class="q-ml-sm" v-close-popup />
             </div>
           </q-form>
@@ -271,21 +268,11 @@ function deleteItem(hostId, itemId) {
       </q-card>
     </q-dialog>
 
-
-  <div class="q-pa-md" style="max-width: 400px">
-    
-  </div>
 </template>
 
 
 <style scoped>
-.row {
-  display: flex;
-  flex-direction: row;
-}
-div.row p {
-  flex: 1;
-}
+
 .filters li {
   display: inline-block;
   padding: 10px;

@@ -7,7 +7,7 @@ import { ref, reactive, computed, inject} from 'vue'
  */
 
 const props = defineProps([
-  'todoId',
+  'id',
   'todoItemText',
   'todoItemStatus'
 ]);
@@ -23,10 +23,10 @@ const emit = defineEmits([
 
 const todoItemStatus = computed({
   get() {
-    return props.todoItemStatus
+    return props.todoItemStatus === true
   },
   set(todoItemStatus) {
-    emit('todoItemChangeStatus', todoItemStatus)
+    emit('todoItemChangeStatus', props.id, todoItemStatus)
   }
 })
 
@@ -38,17 +38,24 @@ const test = inject('test');
 </script>
 
 <template>
-  <li :class="{ 'action-done': todoItemStatus}">
-    <input type="checkbox" 
-      v-model="todoItemStatus"
-      />
-      {{ todoItemText }} <button @click="$emit('todoItemRemove')">Remove</button>
-  </li>
+  <div>
+    <q-checkbox v-model="todoItemStatus" />
+    <span 
+      :class="{ 'action-done': todoItemStatus}">
+      {{ todoItemText }}
+    </span>
+    <q-btn
+      square
+      flat
+      @click="$emit('todoItemRemove', props.id)"
+      label="Remove"
+    />
+  </div>
   <!-- <slot></slot> -->
 </template>
 
 <style scoped>
-li.action-done {
+.action-done {
   text-decoration: line-through;
 }
 </style>

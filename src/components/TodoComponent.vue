@@ -1,6 +1,6 @@
 <script setup>
 
-import { ref, reactive, computed, onMounted} from 'vue'
+import { ref, reactive, computed, onMounted, watchEffect} from 'vue'
 import TodoItem from './TodoItem.vue'
 
 
@@ -8,39 +8,33 @@ import TodoItem from './TodoItem.vue'
  * Refs and variables
  */
 
-const todoItemList = reactive([]);
+const STORAGE_KEY = 'netmonitor-todo'
+
+const todoItemList = reactive(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
 const todoItemSelect = ref('all')
 const todoItemInput = ref('')
 const todoItemInputRef = ref(null)
-const todoItemLoading = ref(true)
 
-let increment = 4;
+let increment = todoItemList.length?todoItemList[todoItemList.length-1].id+1:1;
+
+const todoItemFilteredList = computed (()=>{
+  return todoItemList.filter(value=>value.todoItemStatus.toString()===todoItemSelect.value||todoItemSelect.value==='all')
+})
+
 
 /**
  * Remote data fetching
  */
 
-setTimeout(() => {
-  todoItemList.push(
-  {
-    todoId: 1,
-    todoItemText: 'Buy bread',
-    todoItemStatus: true
-  },
-  {
-    todoId: 2,
-    todoItemText: 'Buy coke',
-    todoItemStatus: false
-  },
-  {
-    todoId: 3,
-    todoItemText: 'Buy cheese',
-    todoItemStatus: true
-  }
-)
-todoItemLoading.value = false
-}, 2000)  
 
+/**
+ * Watchers
+ */
+
+watchEffect(() => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(todoItemList))
+})
 
 /**
  * Lifecycle
@@ -63,8 +57,13 @@ function todoAddItem() {
   }    
 }
 
-function todoItemChangeStatus(index,newStatus) {
-  todoItemList[index].todoItemStatus = newStatus||false;
+function todoItemChangeStatus(id,todoItemStatus) {
+  todoItemList[todoItemList.findIndex((item)=>item.id===id)].todoItemStatus = todoItemStatus||false;
+}
+
+function todoRemoveItem(id) {
+  console.log(todoItemList, id)
+  todoItemList.splice(todoItemList.findIndex((item)=>item.id===id),1)
 }
 
 /**
@@ -76,27 +75,43 @@ function todoItemChangeStatus(index,newStatus) {
 
 <template>
     
-    <div><input ref="todoItemInputRef" type="text" v-model.lazy="todoItemInput" placeholder="Input task name" />
-    <button @click="todoAddItem">Add task</button>
+    <div class="todo-input">
+      <q-input 
+        filled
+        ref="todoItemInputRef"
+        v-model="todoItemInput"
+        label="Input task"
+        @keyup.enter="todoAddItem"
+      />
+      <q-btn color="primary" label="Add task" @click="todoAddItem" square />
     </div>
     
     <!-- <label for="todoItemSelect">Show items ...</label> -->
-    
-      <select id="todoItemSelect" v-model="todoItemSelect">
-        <option value="all">Show all</option>
-        <option value="false">Only undone</option>
-        <option value="true">Only done</option>
-      </select>
-    <ul>
-      <div v-if="todoItemLoading">Loading items...</div>
-      <div v-else-if="!todoItemList.length">No items to display.</div>
-      <template v-for="(value, index) of todoItemList" :key="value.todoId">
-        <todo-item v-if="value.todoItemStatus.toString()===todoItemSelect||todoItemSelect==='all'" 
-          v-bind="value"
-          @todo-item-change-status = "(todoItemStatus)=>todoItemChangeStatus(index,todoItemStatus)"
-          @todo-item-remove="todoItemList.splice(index,1)"
-        ></todo-item>
-    </template>
-    </ul>
-
+    <div class="q-pa-md">
+      <div v-if="!todoItemFilteredList.length">No items to display.</div>
+      <div v-for="(value) of todoItemFilteredList" :key="value.id">
+        <todo-item
+            v-bind="value"
+            @todo-item-change-status = "(id,todoItemStatus)=>todoItemChangeStatus(id,todoItemStatus)"
+            @todo-item-remove="(id)=>todoRemoveItem(id)"
+        />
+      </div>
+    </div>
+    <div class="todo-select">
+      <q-btn-toggle
+        v-model="todoItemSelect"
+        glossy
+        dense
+        toggle-color="primary"
+        :options="[
+          {label: 'Show all', value: 'all'},
+          {label: 'Only undone', value: 'false'},
+          {label: 'Only done', value: 'true'}
+        ]"
+      />
+    </div>
 </template>
+
+<style scoped lang="scss">
+
+</style>

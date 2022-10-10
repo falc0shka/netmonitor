@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useMainStore = defineStore('main', {
   state: () => ({
     mainStatus: true,
-    lastUpdate: new Date().toLocaleString('ru-RU'),
+    lastUpdate: 'Never',
     counter: 0,
   }),
   getters: {

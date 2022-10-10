@@ -24,7 +24,7 @@ const servicesStore = useServicesStore()
  * Refs and variables
  */
 
- const $q = useQuasar()
+const $q = useQuasar()
 
 const filterStatus = ref('any')
 const filterService = ref([])
@@ -107,25 +107,29 @@ function deleteHost(id) {
 
 
 <template>
-  <h1>Host list</h1>
-  <q-btn label="Reset filters" color="primary" @click="filterReset" class="q-mb-md" />
-  <div class="q-gutter-sm">
-    <strong>Filter by status:</strong>
-    <q-radio dense v-model="filterStatus" val="any" label="Any" />
-    <q-radio dense v-model="filterStatus" val="true" label="OK" />
-    <q-radio dense v-model="filterStatus" val="false" label="FAIL" />
-  </div>
-  
-  <div class="q-gutter-sm">
-    <div><strong>Filter by service:</strong></div>
-    <template v-for="service of servicesStore.services" :key="service.serviceId">
-      <q-checkbox dense v-model="filterService" :val="service.serviceId" :label="service.serviceName" />
-    </template>
+  <h1 class="q-ma-sm">Host list</h1>
+  <div class="q-ma-sm">
+    <q-btn label="Reset filters" color="primary" @click="filterReset" class="q-mb-md" />
+    <div class="q-gutter-sm">
+      <strong>Filter by status:</strong>
+      <q-radio dense v-model="filterStatus" val="any" label="Any" />
+      <q-radio dense v-model="filterStatus" val="true" label="OK" />
+      <q-radio dense v-model="filterStatus" val="false" label="FAIL" />
+    </div>
+    
+    <div class="q-gutter-sm">
+      <div><strong>Filter by service:</strong></div>
+      <template v-for="service of servicesStore.services" :key="service.serviceId">
+        <q-checkbox dense v-model="filterService" :val="service.serviceId" :label="service.serviceName" />
+      </template>
+    </div>
   </div>
 
 
   <hr>
   <div class="hosts">
+    <div v-if="!filteredHostsList.length">No hosts to display</div>
+    
     <q-card class="q-pa-md q-ma-sm" v-for="hostItem of filteredHostsList" :key="hostItem._id">
       <h3 class="hostName">
           <router-link :to="{name: 'host.page', params: {_id: hostItem._id}}">
@@ -140,7 +144,7 @@ function deleteHost(id) {
       <q-btn @click="displayHostDetails.delete(hostItem._id)" v-if="displayHostDetails.has(hostItem._id)">
           Hide details
       </q-btn>
-      <div class="host-details q-mt-md" v-if="displayHostDetails.has(hostItem._id)">
+      <div class="host-details q-mt-md q-pa-sm" v-if="displayHostDetails.has(hostItem._id)">
           <p class="hostId"><strong>ID:</strong> {{hostItem._id}}</p>
           <p><strong>FQDN:</strong> {{hostItem.hostFqdn}}</p>
           <p><strong>IP:</strong> {{hostItem.hostIp}}</p>

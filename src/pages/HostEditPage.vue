@@ -105,14 +105,14 @@ function onReset() {
 
 
 <template>
-  <h1>{{formDefaults.hostName}} edit page</h1>
+  <h1 class="q-ma-sm">{{formDefaults.hostName}} edit page</h1>
   <q-btn 
     color="primary"
     label="Back to host" 
     @click="$router.back()"
     class="q-ma-sm"
   />
-  <div class="q-pa-md" style="max-width: 400px">
+  <div class="q-pt-sm q-ma-sm" style="max-width: 400px">
 
     <q-form
       @submit.prevent="onSubmit"
@@ -181,8 +181,8 @@ function onReset() {
 
 
       <div>
-        <q-btn label="Submit" type="submit" color="primary"/>
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+        <q-btn label="Save changes" type="submit" color="primary"/>
+        <q-btn label="Reset form" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
     </q-form>
   </div>

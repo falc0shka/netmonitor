@@ -119,6 +119,10 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
     }
-  }
+  },
+  mounted() {
+    console.log(`Main layount mounted`)
+    
+  },
 })
 </script>
