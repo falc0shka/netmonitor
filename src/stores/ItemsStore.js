@@ -11,7 +11,6 @@ export const useItemsStore = defineStore('items', {
       this.items = (await axios.get(`http://10.0.0.87:3000/v1/items/${id}`)).data
     },
     async createItem(values) {
-      console.log(values)
         await axios.post(
             `http://10.0.0.87:3000/v1/items`,
             {

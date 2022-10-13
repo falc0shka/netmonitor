@@ -135,7 +135,7 @@ function deleteHost(id) {
           <router-link :to="{name: 'host.page', params: {_id: hostItem._id}}">
             {{hostItem.hostName}}
           </router-link>
-          <q-icon name="check_circle" size="1em" color="positive" v-if="hostItem.hostStatus == true"/>
+          <q-icon name="check_circle" size="1em" color="positive" v-if="hostItem.hostStatus == 'true'"/>
           <q-icon name="warning" size="1em" color="negative" v-else />
         </h3>
       <q-btn @click="displayHostDetails.add(hostItem._id)" v-if="!displayHostDetails.has(hostItem._id)">

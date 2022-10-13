@@ -78,12 +78,13 @@ function todoRemoveItem(id) {
     <div class="todo-input">
       <q-input 
         filled
+        dense
         ref="todoItemInputRef"
         v-model="todoItemInput"
         label="Input task"
         @keyup.enter="todoAddItem"
       />
-      <q-btn color="primary" label="Add task" @click="todoAddItem" square />
+      <q-btn color="primary" label="Add task" @click="todoAddItem" square dense />
     </div>
     
     <!-- <label for="todoItemSelect">Show items ...</label> -->

@@ -3,6 +3,7 @@
 import { ref, reactive, computed, defineAsyncComponent, onMounted, watch, provide, readonly, inject} from 'vue'
 import { useItemsStore } from '../stores/ItemsStore'
 
+import '../utils/Chart'
 
 /**
  * Props and Emits
@@ -53,7 +54,7 @@ onMounted(() => {
       data: {
         labels: xValues,
         datasets: [{
-          data: itemsStore.items.filter(item=>item.itemHost===props._id)[0].itemGraph,
+          data: itemsStore.items.filter(item=>item._id===props._id)[0].itemGraph,
           borderColor: "blue",
           fill: false
         }]

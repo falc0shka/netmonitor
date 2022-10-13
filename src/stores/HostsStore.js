@@ -20,15 +20,15 @@ export const useHostsStore = defineStore('hosts', {
       mainStore.lastUpdate = new Date().toLocaleString('ru-RU')
       console.log('Hosts data was fetched')
       let tempMainStatus = true
-      this.hosts.forEach( host => {
-        if (host.hostStatus == 'false') {
-          servicesStore.changeServiceStatus(host.hostService, 'false')
-          tempMainStatus = false
+      for (let service of servicesStore.services) {
+        if (this.hosts.filter(host=>host.hostService===service.serviceId).every(host=>host.hostStatus === 'true')) {
+          servicesStore.changeServiceStatus(service.serviceId, 'true')
         }
         else {
-          servicesStore.changeServiceStatus(host.hostService, 'true')
+          servicesStore.changeServiceStatus(service.serviceId, 'false')
+          tempMainStatus = false
         }
-      })
+      }
       mainStore.mainStatus = tempMainStatus
     },
     async getHostById(id) {

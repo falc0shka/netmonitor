@@ -61,7 +61,7 @@ export const useServicesStore = defineStore('services', {
       return this.services.filter(service=>service.serviceId==id)[0].serviceName
     },
     changeServiceStatus(id, status) {
-      this.services.filter(service=>service.serviceId==id)[0].serviceStatus = status
+      this.services.filter(service=>service.serviceId===id)[0].serviceStatus = status
     },
   }
 }

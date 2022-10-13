@@ -36,7 +36,7 @@ hostsStore.getHostById(props._id) // find host
 const itemsStore = useItemsStore()
 
 itemsStore.getItemsByHostId(props._id)
-console.log(itemsStore.items)
+
 
 /**
  * Refs and variables
@@ -85,11 +85,9 @@ const itemGraph = ref(null)
 
 function onHashChange() {
   const route = window.location.hash.replace(/#\/?/, '')
-  console.log(route)
   if (filters[route]) {
     visibility.value = route
   } else {
-    console.log('test')
     window.location.hash = ''
     visibility.value = 'all'
   }
@@ -107,6 +105,7 @@ async function onSubmit() {
       }
     )
     await itemsStore.getItemsByHostId(props._id)
+    await hostsStore.getHostById(props._id)
 
     $q.notify({
       color: 'green-4',
@@ -133,6 +132,8 @@ function deleteItem(hostId, itemId) {
     //console.log('>>>> OK')
     await itemsStore.deleteItem(itemId)
     await itemsStore.getItemsByHostId(hostId)
+    await hostsStore.getHostById(props._id)
+
     $q.notify({
         color: 'green-4',
         textColor: 'white',
@@ -190,6 +191,7 @@ function deleteItem(hostId, itemId) {
     <p>Host status: {{hostsStore.host.hostStatus}}</p>
     <p>Host service: {{hostsStore.host.hostService}}</p>
     <p>Host cluster: {{hostsStore.host.hostCluster}}</p>
+    <p>Host items: {{hostsStore.host.hostItems}}</p>
     <p>Notes: {{hostsStore.host.hostNote}}</p>
   </q-card>
 
@@ -204,7 +206,7 @@ function deleteItem(hostId, itemId) {
       <div class="items q-mt-sm" v-if="!filteredItemsList.length">No items found matching the specified filter</div>
       <q-card class="q-pa-md q-mt-sm" v-for="item of filteredItemsList" :key="item._id">
         <h2 class="itemType">{{item.itemType}}
-          <q-icon name="check_circle" size="1em" color="positive" v-if="item.itemStatus == true"/>
+          <q-icon name="check_circle" size="1em" color="positive" v-if="item.itemStatus == 'true'"/>
           <q-icon name="warning" size="1em" color="negative" v-else />
         </h2>
         <!-- <p class="itemHost">itemHost: {{item.itemHost}}</p> -->
@@ -212,7 +214,7 @@ function deleteItem(hostId, itemId) {
         <q-btn label="Show graph" color="dark" @click="displayItemGraph.add(item._id)" v-if="!displayItemGraph.has(item._id)" dense />
         <q-btn label="Hide graph" color="dark" @click="displayItemGraph.delete(item._id)" v-if="displayItemGraph.has(item._id)" dense />
         <div class="item-graph" v-if="displayItemGraph.has(item._id)">
-          <item-graph-component :_id="hostsStore.host._id"/>
+          <item-graph-component :_id="item._id"/>
         </div>
         <q-card-actions align="right">
           <q-btn label="Delete item" color="negative" @click="deleteItem(_id, item._id)" dense />
@@ -224,7 +226,7 @@ function deleteItem(hostId, itemId) {
     </div>
     <div class="items" v-else>No items to display</div>
   </div>
-  <q-btn label="Add new item" color="primary" align="right" @click="itemCreateDialog = true" class="q-ma-sm" />
+  <q-btn label="Add new item" color="primary" @click="itemCreateDialog = true" class="q-ma-sm" />
 
 
   <q-dialog v-model="itemCreateDialog" persistent>
