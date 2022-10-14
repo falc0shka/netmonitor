@@ -16,7 +16,7 @@ export const useHostsStore = defineStore('hosts', {
     async getHosts(){
       const servicesStore = useServicesStore()
       const mainStore = useMainStore()
-      this.hosts = (await axios.get('http://10.0.0.87:3000/v1/hosts')).data
+      this.hosts = (await axios.get(`${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/hosts`)).data
       mainStore.lastUpdate = new Date().toLocaleString('ru-RU')
       console.log('Hosts data was fetched')
       let tempMainStatus = true
@@ -33,11 +33,11 @@ export const useHostsStore = defineStore('hosts', {
     },
     async getHostById(id) {
       this.host = { loading: true }
-        this.host = (await axios.get(`http://10.0.0.87:3000/v1/hosts/${id}`)).data
+        this.host = (await axios.get(`${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/hosts/${id}`)).data
     },
     async createHost(values) {
       await axios.post(
-        `http://10.0.0.87:3000/v1/hosts`,
+        `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/hosts`,
         {
           ...values,
         }
@@ -45,7 +45,7 @@ export const useHostsStore = defineStore('hosts', {
     },
     async updateHost(id, values) {
       this.host = (await axios.put(
-          `http://10.0.0.87:3000/v1/hosts`,
+          `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/hosts`,
           {
             "_id": id,
             ...values,
@@ -55,7 +55,7 @@ export const useHostsStore = defineStore('hosts', {
     },
     async deleteHost(id) {
       await axios.delete(
-        `http://10.0.0.87:3000/v1/hosts/${id}`
+        `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/hosts/${id}`
       ) 
     }
   }

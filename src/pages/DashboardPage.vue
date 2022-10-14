@@ -156,7 +156,7 @@ const TodoAsyncComp = defineAsyncComponent({
     <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
       <q-card class="my-content">
         <!-- Toto module -->
-        <h2 class="q-my-sm">ToDo List module</h2>
+        <h2 class="q-my-sm">ToDo</h2>
         <TodoAsyncComp />
       </q-card>
     </div>

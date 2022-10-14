@@ -204,7 +204,7 @@ function deleteItem(hostId, itemId) {
         <q-btn href="#fail" label="Only FAIL" :color="visibility === 'fail'?'secondary':'primary'"/>
       </q-btn-group>
       <div class="items q-mt-sm" v-if="!filteredItemsList.length">No items found matching the specified filter</div>
-      <q-card class="q-pa-md q-mt-sm" v-for="item of filteredItemsList" :key="item._id">
+      <q-card class="q-pa-md q-my-lg" v-for="item of filteredItemsList" :key="item._id">
         <h2 class="itemType">{{item.itemType}}
           <q-icon name="check_circle" size="1em" color="positive" v-if="item.itemStatus == 'true'"/>
           <q-icon name="warning" size="1em" color="negative" v-else />

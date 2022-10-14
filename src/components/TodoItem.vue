@@ -45,8 +45,9 @@ const test = inject('test');
       {{ todoItemText }}
     </span>
     <q-btn
-      square
+      
       flat
+      class="q-ml-sm q-pa-sm bg-negative text-white"
       @click="$emit('todoItemRemove', props.id)"
       label="Remove"
     />

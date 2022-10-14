@@ -130,13 +130,22 @@ function deleteHost(id) {
   <div class="hosts">
     <div v-if="!filteredHostsList.length">No hosts to display</div>
     
-    <q-card class="q-pa-md q-ma-sm" v-for="hostItem of filteredHostsList" :key="hostItem._id">
+    <q-card 
+    class="q-pa-md q-ma-lg shadow-6" 
+    v-for="hostItem of filteredHostsList" 
+    :key="hostItem._id"
+    :class="{
+              'ok': hostItem.hostStatus == 'true',
+              'fail': hostItem.hostStatus == 'false'
+            }"
+    >
       <h3 class="hostName">
-          <router-link :to="{name: 'host.page', params: {_id: hostItem._id}}">
+          <q-icon name="check_circle" size="2em" color="positive" v-if="hostItem.hostStatus == 'true'"/>
+          <q-icon name="warning" size="2em" color="negative" v-else />
+          <router-link :to="{name: 'host.page', params: {_id: hostItem._id}}" class="text-primary q-ml-sm">
             {{hostItem.hostName}}
           </router-link>
-          <q-icon name="check_circle" size="1em" color="positive" v-if="hostItem.hostStatus == 'true'"/>
-          <q-icon name="warning" size="1em" color="negative" v-else />
+
         </h3>
       <q-btn @click="displayHostDetails.add(hostItem._id)" v-if="!displayHostDetails.has(hostItem._id)">
           Show details
@@ -151,7 +160,7 @@ function deleteHost(id) {
           <p class="serviceId"><strong>Service:</strong> {{servicesStore.getSeviceName(hostItem.hostService)}}</p>
       </div>
       <q-card-actions align="right">
-        <q-btn label="Delete host" color="negative" @click="deleteHost(hostItem._id)" dense />
+        <q-btn label="Delete host" color="grey" @click="deleteHost(hostItem._id)" dense />
       </q-card-actions>
     </q-card>
   </div>
@@ -165,6 +174,17 @@ function deleteHost(id) {
 
 .host-details {
   border: 1px dotted #aaa;
+}
+
+.q-card a {
+  text-decoration: none;
+}
+
+.q-card.ok {
+  box-shadow: 0 3px 5px -1px rgba(36, 133, 6, 0.755), 0 6px 10px rgba(62, 151, 42, 0.418), 0 1px 18px rgba(52, 129, 5, 0.12);
+}
+.q-card.fail {
+  box-shadow: 0 3px 5px -1px rgba(133, 6, 6, 0.755), 0 6px 10px rgba(151, 42, 42, 0.418), 0 1px 18px rgba(129, 5, 5, 0.12);
 }
 
 </style>

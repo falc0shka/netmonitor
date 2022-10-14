@@ -84,7 +84,7 @@ function todoRemoveItem(id) {
         label="Input task"
         @keyup.enter="todoAddItem"
       />
-      <q-btn color="primary" label="Add task" @click="todoAddItem" square dense />
+      <q-btn color="white" class="bg-primary" label="Add task" @click="todoAddItem" square flat/>
     </div>
     
     <!-- <label for="todoItemSelect">Show items ...</label> -->
@@ -102,7 +102,6 @@ function todoRemoveItem(id) {
       <q-btn-toggle
         v-model="todoItemSelect"
         glossy
-        dense
         toggle-color="primary"
         :options="[
           {label: 'Show all', value: 'all'},

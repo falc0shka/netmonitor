@@ -8,11 +8,11 @@ export const useItemsStore = defineStore('items', {
   }),
   actions: {
     async getItemsByHostId(id) {
-      this.items = (await axios.get(`http://10.0.0.87:3000/v1/items/${id}`)).data
+      this.items = (await axios.get(`${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/items/${id}`)).data
     },
     async createItem(values) {
         await axios.post(
-            `http://10.0.0.87:3000/v1/items`,
+            `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/items`,
             {
               ...values,
             }
@@ -20,7 +20,7 @@ export const useItemsStore = defineStore('items', {
     },
     async deleteItem(id) {
       await axios.delete(
-        `http://10.0.0.87:3000/v1/items/${id}`
+        `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/items/${id}`
       ) 
     }
   }

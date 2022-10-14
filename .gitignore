@@ -1,3 +1,9 @@
+# Environment varibales
+.env*
+!.env*.example
+
+# Main
+
 node_modules
 .DS_Store
 .thumbs.db
