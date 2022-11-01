@@ -59,7 +59,7 @@ watch(autoUpdate, (newValue) => {
   else {
     autoUpdateRef.value = setInterval(() => {
       hostsStore.getHosts()
-    }, 10000)
+    }, 600000)
   }
   console.log(`Auto-fetching data is ${newValue} now`)
 })
@@ -76,7 +76,7 @@ onMounted(()=> {
   console.log('Mounted!')
   autoUpdateRef.value = setInterval(() => {
     hostsStore.getHosts()
-  }, 10000)
+  }, 600000)
 })
 onUnmounted(()=>{
   clearInterval(autoUpdateRef.value)
@@ -118,12 +118,12 @@ const TodoAsyncComp = defineAsyncComponent({
   <div class="fit row q-col-gutter-sm q-pa-sm">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <!-- Current status -->
-      <q-card class="my-content current-status">
+      <q-card class="current__status">
         
         <h2 class="q-my-sm">
           Current status
-          <q-icon name="check_circle" size="2em" color="positive" v-if="mainStore.mainStatus == true"/>
-          <q-icon name="warning" size="2em" color="negative" v-else />
+          <q-icon class="current__status__icon" name="check_circle" size="2em" color="positive" v-if="mainStore.mainStatus == true"/>
+          <q-icon class="current__status__icon_warning" name="warning" size="2em" color="negative" v-else />
         </h2>
         <h3>Last update from server</h3>
         <p>{{mainStore.lastUpdate}}</p>
@@ -139,7 +139,7 @@ const TodoAsyncComp = defineAsyncComponent({
       </q-card>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6">
-      <q-card class="my-content">
+      <q-card>
         <!-- Services module -->
         <h2 class="q-my-sm">Services</h2>
         <Services />
@@ -148,13 +148,13 @@ const TodoAsyncComp = defineAsyncComponent({
   </div>
   <div class="fit row q-col-gutter-sm q-pa-sm">
     <div class="col-xs-12 col-sm-12 col-md-6">
-      <q-card class="my-content">
+      <q-card>
         <h2 class="q-my-sm">Alerts</h2>
         <p>Under construction</p>
       </q-card>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
-      <q-card class="my-content">
+      <q-card>
         <!-- Toto module -->
         <h2 class="q-my-sm">ToDo</h2>
         <TodoAsyncComp />
@@ -172,8 +172,19 @@ const TodoAsyncComp = defineAsyncComponent({
 // .row + .row {
 //   margin-top: 1rem;
 // }
-.my-content {
+.q-card {
   height: 100%;
   padding: 20px 20px;
+}
+
+.current__status__icon_warning {
+  @keyframes warning {
+    to {
+      transform: scale(1.3);
+    }
+  }
+  animation: warning 2s steps(10,jump-none) infinite;
+  position: relative;
+  top: -5px;
 }
 </style>
