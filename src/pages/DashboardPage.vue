@@ -1,52 +1,52 @@
 <script setup>
+import {
+  ref,
+  provide,
+  readonly,
+  defineAsyncComponent,
+  onMounted,
+  onUnmounted,
+  watch,
+} from 'vue';
+import LoadingComponent from '../components/tech/LoadingComponent.vue';
+import ErrorComponent from '../components/tech/ErrorComponent.vue';
 
-import { ref, provide, readonly, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
-import LoadingComponent from '../components/tech/LoadingComponent.vue'
-import ErrorComponent from '../components/tech/ErrorComponent.vue'
+import Services from '../components/ServicesComponent.vue';
 
-import Services from '../components/ServicesComponent.vue'
-
-import { useHostsStore } from '../stores/HostsStore'
-import { useServicesStore } from '../stores/ServicesStore'
-import { useMainStore } from '../stores/MainStore'
-
+import { useHostsStore } from '../stores/HostsStore';
+import { useServicesStore } from '../stores/ServicesStore';
+import { useMainStore } from '../stores/MainStore';
 
 /**
  * Props and Emits
  */
 
- const props = defineProps([
+const props = defineProps([]);
 
-]);
-
-const emit = defineEmits([
-
-]);
+const emit = defineEmits([]);
 
 /**
  * State
  */
 
-const mainStore = useMainStore()
+const mainStore = useMainStore();
 
-const hostsStore = useHostsStore()
-console.log('Start getting hosts!')
-hostsStore.getHosts()
+const hostsStore = useHostsStore();
+hostsStore.getHosts();
 
 /**
  * Refs and variables
  */
 
-const testMesssage = ref('it\'s "provide"-feature testing!')
+const testMesssage = ref('it\'s "provide"-feature testing!');
 
-const autoUpdate = ref('ON')
+const autoUpdate = ref('ON');
 
-const autoUpdateRef = ref(null)
+const autoUpdateRef = ref(null);
 
 /**
  * Remote data fetching
  */
-
 
 /**
  * Watchers
@@ -54,34 +54,32 @@ const autoUpdateRef = ref(null)
 
 watch(autoUpdate, (newValue) => {
   if (newValue === 'OFF') {
-    clearInterval(autoUpdateRef.value)
-  }
-  else {
+    clearInterval(autoUpdateRef.value);
+  } else {
     autoUpdateRef.value = setInterval(() => {
-      hostsStore.getHosts()
-    }, 600000)
+      hostsStore.getHosts();
+    }, 600000);
   }
-  console.log(`Auto-fetching data is ${newValue} now`)
-})
+  console.log(`Auto-fetching data is ${newValue} now`);
+});
 
 /**
  * Methods
  */
 
-
 /**
  * Lifecycle
  */
-onMounted(()=> {
-  console.log('Mounted!')
+onMounted(() => {
+  console.log('Mounted!');
   autoUpdateRef.value = setInterval(() => {
-    hostsStore.getHosts()
-  }, 600000)
-})
-onUnmounted(()=>{
-  clearInterval(autoUpdateRef.value)
-  console.log('Unmounnted!')
-})
+    hostsStore.getHosts();
+  }, 600000);
+});
+onUnmounted(() => {
+  clearInterval(autoUpdateRef.value);
+  console.log('Unmounnted!');
+});
 /**
  * Todo module loader
  */
@@ -89,44 +87,53 @@ onUnmounted(()=>{
 const TodoAsyncComp = defineAsyncComponent({
   loader: async () => {
     try {
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         setTimeout(resolve, 2000);
       });
       return await import('../components/TodoComponent.vue');
-    } catch (e) {console.log(e)}
+    } catch (e) {
+      console.log(e);
+    }
   },
   loadingComponent: LoadingComponent,
   delay: 200,
   errorComponent: ErrorComponent,
-  timeout: 10000
-})
-
+  timeout: 10000,
+});
 
 /**
  * Feature testing
  */
 
-
- provide('test', readonly(testMesssage));
-
-
+provide('test', readonly(testMesssage));
 </script>
 
 <template>
-  <h1 class="q-ma-sm">Dashboard</h1>
+  <h1 class="q-my-sm">Dashboard</h1>
 
-  <div class="fit row q-col-gutter-sm q-pa-sm">
+  <div class="fit row q-col-gutter-sm q-my-sm">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <!-- Current status -->
       <q-card class="current__status">
-        
         <h2 class="q-my-sm">
           Current status
-          <q-icon class="current__status__icon" name="check_circle" size="2em" color="positive" v-if="mainStore.mainStatus == true"/>
-          <q-icon class="current__status__icon_warning" name="warning" size="2em" color="negative" v-else />
+          <q-icon
+            class="current__status__icon"
+            name="check_circle"
+            size="2em"
+            color="positive"
+            v-if="mainStore.mainStatus == true"
+          />
+          <q-icon
+            class="current__status__icon_warning"
+            name="warning"
+            size="2em"
+            color="negative"
+            v-else
+          />
         </h2>
         <h3>Last update from server</h3>
-        <p>{{mainStore.lastUpdate}}</p>
+        <p>{{ mainStore.lastUpdate }}</p>
         <q-toggle
           false-value="OFF"
           :label="`Auto update is ${autoUpdate}`"
@@ -146,14 +153,14 @@ const TodoAsyncComp = defineAsyncComponent({
       </q-card>
     </div>
   </div>
-  <div class="fit row q-col-gutter-sm q-pa-sm">
+  <div class="fit row q-col-gutter-sm q-my-sm">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <q-card>
         <h2 class="q-my-sm">Alerts</h2>
         <p>Under construction</p>
       </q-card>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative;">
+    <div class="col-xs-12 col-sm-12 col-md-6" style="position: relative">
       <q-card>
         <!-- Toto module -->
         <h2 class="q-my-sm">ToDo</h2>
@@ -183,7 +190,7 @@ const TodoAsyncComp = defineAsyncComponent({
       transform: scale(1.3);
     }
   }
-  animation: warning 2s steps(10,jump-none) infinite;
+  animation: warning 2s steps(10, jump-none) infinite;
   position: relative;
   top: -5px;
 }

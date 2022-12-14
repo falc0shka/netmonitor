@@ -1,16 +1,17 @@
-
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        path: '/', name: 'dashboard', component: ()=>import('../pages/DashboardPage.vue')
+        path: '/',
+        name: 'dashboard',
+        component: () => import('../pages/DashboardPage.vue'),
       },
       {
         path: '/hosts',
         name: 'hosts',
-        component: ()=>import('../pages/HostsPage.vue'),
+        component: () => import('../pages/HostsPage.vue'),
         // children: [
         //   {
         //     path: ':id',
@@ -19,23 +20,22 @@ const routes = [
         //     props: route => ({...route.params})
         //   }
         // ]
-    
       },
       {
         path: '/hosts/:_id',
         name: 'host.page',
-        component: ()=>import('../pages/HostPage.vue'),
-        props: route => ({...route.params}),
-        beforeEnter(to,from) {
+        component: () => import('../pages/HostPage.vue'),
+        props: (route) => ({ ...route.params }),
+        beforeEnter(to, from) {
           //console.log(to)
-        }
+        },
       },
       {
         path: '/hosts/:_id/edit',
         name: 'host.edit',
-        component: ()=>import('../pages/HostEditPage.vue'),
-        props: route => ({...route.params}),
-        beforeEnter(to,from) {
+        component: () => import('../pages/HostEditPage.vue'),
+        props: (route) => ({ ...route.params }),
+        beforeEnter(to, from) {
           //console.log(to)
           if (!true) {
             return {
@@ -43,16 +43,16 @@ const routes = [
               query: to.query,
               hash: to.hash,
               params: {
-                pathmatch: to.path.split('/').slice(1)
-              }
-            }
+                pathmatch: to.path.split('/').slice(1),
+              },
+            };
           }
-        }
+        },
       },
       {
         path: '/admin',
         name: 'admin',
-        component: ()=>import('../pages/AdminPage.vue'),
+        component: () => import('../pages/AdminPage.vue'),
         // children: [
         //   {
         //     path: ':id',
@@ -61,11 +61,10 @@ const routes = [
         //     props: route => ({...route.params})
         //   }
         // ]
-    
       },
-    ]
+    ],
   },
-    
+
   // {
   //   path: '/:pathmatch(.*)*',
   //   name: 'notfound',
@@ -79,8 +78,8 @@ const routes = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
-]
+    component: () => import('pages/ErrorNotFound.vue'),
+  },
+];
 
-export default routes
+export default routes;

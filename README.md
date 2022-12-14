@@ -1,6 +1,6 @@
 # Netmonitor (by falc0shka)
 
-Custom monitoring system for network and server infrastructure 
+Custom monitoring system for network and server infrastructure
 
 # Notes
 
