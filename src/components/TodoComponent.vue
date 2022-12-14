@@ -2,10 +2,6 @@
 import { ref, reactive, computed, onMounted, watchEffect } from 'vue';
 import TodoItem from './TodoItem.vue';
 
-/**
- * Refs and variables
- */
-
 const STORAGE_KEY = 'netmonitor-todo';
 
 const todoItemList = reactive(
@@ -28,27 +24,9 @@ const todoItemFilteredList = computed(() => {
   );
 });
 
-/**
- * Remote data fetching
- */
-
-/**
- * Watchers
- */
-
 watchEffect(() => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(todoItemList));
 });
-
-/**
- * Lifecycle
- */
-
-// onMounted(()=>todoItemInputRef.value.focus());
-
-/**
- * Methods
- */
 
 function todoAddItem() {
   if (todoItemInput.value) {

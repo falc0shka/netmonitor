@@ -1,32 +1,14 @@
 <script setup>
-import {
-  ref,
-  reactive,
-  computed,
-  defineAsyncComponent,
-  onMounted,
-  watch,
-  provide,
-  readonly,
-  inject,
-} from 'vue';
+import { ref } from 'vue';
 import { useHostsStore } from '../stores/HostsStore';
 import { useQuasar } from 'quasar';
 import { store } from 'quasar/wrappers';
 import { storeToRefs } from 'pinia';
 import { useServicesStore } from '../stores/ServicesStore';
 
-/**
- * Props and Emits
- */
-
 const props = defineProps({});
 
 const emit = defineEmits([]);
-
-/**
- * State
- */
 
 const hostsStore = useHostsStore();
 const servicesStore = useServicesStore();
@@ -48,10 +30,6 @@ const formValues = ref({
   hostNote: '',
 });
 
-/**
- * Refs and variables
- */
-
 const $q = useQuasar();
 
 let serviceOptions = [];
@@ -61,18 +39,6 @@ for (let service of servicesStore.services) {
     value: service.serviceId,
   });
 }
-
-/**
- * Remote data fetching
- */
-
-/**
- * Watchers
- */
-
-/**
- * Methods
- */
 
 async function onSubmit() {
   try {
@@ -94,14 +60,6 @@ async function onSubmit() {
 function onReset() {
   formValues.value = { ...formDefaults };
 }
-
-/**
- * Lifecycle
- */
-
-/**
- * Feature testing
- */
 </script>
 
 <template>

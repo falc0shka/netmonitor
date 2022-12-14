@@ -17,10 +17,6 @@ import { useQuasar } from 'quasar';
 import { store } from 'quasar/wrappers';
 import { storeToRefs } from 'pinia';
 
-/**
- * Props and Emits
- */
-
 const props = defineProps({
   _id: {
     type: String,
@@ -29,10 +25,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits([]);
-
-/**
- * State
- */
 
 const formDefaults = ref({});
 
@@ -48,10 +40,6 @@ hostsStore
 const servicesStore = useServicesStore();
 console.log(servicesStore);
 
-/**
- * Refs and variables
- */
-
 const $q = useQuasar();
 
 let serviceOptions = [];
@@ -61,18 +49,6 @@ for (let service of servicesStore.services) {
     value: service.serviceId,
   });
 }
-
-/**
- * Remote data fetching
- */
-
-/**
- * Watchers
- */
-
-/**
- * Methods
- */
 
 function onSubmit() {
   hostsStore.updateHost(props._id, {
@@ -92,14 +68,6 @@ function onSubmit() {
 function onReset() {
   hostsStore.host = { ...formDefaults.value };
 }
-
-/**
- * Lifecycle
- */
-
-/**
- * Feature testing
- */
 </script>
 
 <template>

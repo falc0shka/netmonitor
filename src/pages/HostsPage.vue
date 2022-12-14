@@ -1,36 +1,20 @@
 <script setup>
 import {
   ref,
-  reactive,
   computed,
-  defineAsyncComponent,
   onMounted,
   onUnmounted,
   watch,
-  provide,
-  readonly,
-  inject,
+  onBeforeMount,
 } from 'vue';
 import { useHostsStore } from '../stores/HostsStore';
 import { useServicesStore } from '../stores/ServicesStore';
 import { useQuasar } from 'quasar';
 
-/**
- * Props and Emits
- */
-
-/**
- * State
- */
-
 const hostsStore = useHostsStore();
 hostsStore.getHosts();
 
 const servicesStore = useServicesStore();
-
-/**
- * Refs and variables
- */
 
 const $q = useQuasar();
 
@@ -39,9 +23,34 @@ const filterService = ref([]);
 const filterName = ref('');
 const windowWidth = ref(window.innerWidth);
 
+onBeforeMount(() => {
+  const fillterParams = Object.fromEntries(
+    new URL(window.location).searchParams.entries(),
+  );
+  const { name, status, service } = fillterParams;
+  if (name) filterName.value = name;
+  if (status) filterStatus.value = status;
+  if (service) filterService.value = service.split('.');
+});
+
 const onWidthChange = () => (windowWidth.value = window.innerWidth);
-onMounted(() => window.addEventListener('resize', onWidthChange));
-onUnmounted(() => window.removeEventListener('resize', onWidthChange));
+const onStateChange = (e) => {
+  const fillterParams = Object.fromEntries(
+    new URL(window.location).searchParams.entries(),
+  );
+  const { name, status, service } = fillterParams;
+  if (name) filterName.value = name;
+  if (status) filterStatus.value = status;
+  if (service) filterService.value = service.split('.');
+};
+onMounted(() => {
+  window.addEventListener('popstate', onStateChange);
+  window.addEventListener('resize', onWidthChange);
+});
+onUnmounted(() => {
+  window.removeEventListener('popstate', onStateChange);
+  window.removeEventListener('resize', onWidthChange);
+});
 
 const filtersVisibilitySelect = ref(false);
 
@@ -64,21 +73,37 @@ const filteredHostsList = computed(() => {
   });
 });
 
-/**
- * Remote data fetching
- */
-
-/**
- * Watchers
- */
-
-/**
- * Methods
- */
+watch(filterName, (newFilterName) => {
+  history.replaceState(
+    null,
+    '',
+    `?name=${newFilterName}&status=${
+      filterStatus.value
+    }&service=${filterService.value.join('.')}`,
+  );
+});
+watch(filterStatus, (newFilterStatus) => {
+  history.replaceState(
+    null,
+    '',
+    `?name=${
+      filterName.value
+    }&status=${newFilterStatus}&service=${filterService.value.join('.')}`,
+  );
+});
+watch(filterService, (newFilterService) => {
+  newFilterService = newFilterService.join('.');
+  history.replaceState(
+    null,
+    '',
+    `?name=${filterName.value}&status=${filterStatus.value}&service=${newFilterService}`,
+  );
+});
 
 function filterReset() {
   filterStatus.value = 'any';
   filterService.value = [];
+  filterName.value = '';
 }
 
 function deleteHost(id) {
@@ -109,14 +134,6 @@ function deleteHost(id) {
       //console.log('I am triggered on both OK and Cancel')
     });
 }
-
-/**
- * Lifecycle
- */
-
-/**
- * Feature testing
- */
 </script>
 
 <template>

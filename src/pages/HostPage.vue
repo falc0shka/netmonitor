@@ -7,10 +7,6 @@ import { useItemsStore } from '../stores/ItemsStore';
 import { useServicesStore } from '../stores/ServicesStore';
 import ItemGraphComponent from 'src/components/ItemGraphComponent.vue';
 
-/**
- * Props and Emits
- */
-
 const props = defineProps({
   _id: {
     type: String,
@@ -19,10 +15,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits([]);
-
-/**
- * State
- */
 
 const hostsStore = useHostsStore();
 const itemsStore = useItemsStore();
@@ -38,9 +30,6 @@ hostsStore
   })
   .catch((e) => console.log(e));
 
-/**
- * Refs and variables
- */
 const $q = useQuasar();
 
 const itemsFilter = ref('all');
@@ -70,18 +59,6 @@ const displayItemGraph = ref(new Set());
 const itemCreateDialog = ref(false);
 
 const itemGraph = ref(null);
-
-/**
- * Remote data fetching
- */
-
-/**
- * Watchers
- */
-
-/**
- * Methods
- */
 
 async function onSubmit() {
   try {
@@ -138,14 +115,6 @@ function deleteItem(hostId, itemId) {
       //console.log('I am triggered on both OK and Cancel')
     });
 }
-
-/**
- * Lifecycle
- */
-
-/**
- * Feature testing
- */
 </script>
 
 <template>

@@ -17,40 +17,20 @@ import { useHostsStore } from '../stores/HostsStore';
 import { useServicesStore } from '../stores/ServicesStore';
 import { useMainStore } from '../stores/MainStore';
 
-/**
- * Props and Emits
- */
-
 const props = defineProps([]);
 
 const emit = defineEmits([]);
-
-/**
- * State
- */
 
 const mainStore = useMainStore();
 
 const hostsStore = useHostsStore();
 hostsStore.getHosts();
 
-/**
- * Refs and variables
- */
-
 const testMesssage = ref('it\'s "provide"-feature testing!');
 
 const autoUpdate = ref('ON');
 
 const autoUpdateRef = ref(null);
-
-/**
- * Remote data fetching
- */
-
-/**
- * Watchers
- */
 
 watch(autoUpdate, (newValue) => {
   if (newValue === 'OFF') {
@@ -63,13 +43,6 @@ watch(autoUpdate, (newValue) => {
   console.log(`Auto-fetching data is ${newValue} now`);
 });
 
-/**
- * Methods
- */
-
-/**
- * Lifecycle
- */
 onMounted(() => {
   console.log('Mounted!');
   autoUpdateRef.value = setInterval(() => {
@@ -80,9 +53,6 @@ onUnmounted(() => {
   clearInterval(autoUpdateRef.value);
   console.log('Unmounnted!');
 });
-/**
- * Todo module loader
- */
 
 const TodoAsyncComp = defineAsyncComponent({
   loader: async () => {
@@ -100,10 +70,6 @@ const TodoAsyncComp = defineAsyncComponent({
   errorComponent: ErrorComponent,
   timeout: 10000,
 });
-
-/**
- * Feature testing
- */
 
 provide('test', readonly(testMesssage));
 </script>
