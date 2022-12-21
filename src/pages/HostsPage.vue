@@ -6,6 +6,7 @@ import {
   onUnmounted,
   watch,
   onBeforeMount,
+  TransitionGroup,
 } from 'vue';
 import { useHostsStore } from '../stores/HostsStore';
 import { useServicesStore } from '../stores/ServicesStore';
@@ -75,7 +76,7 @@ const filteredHostsList = computed(() => {
 
 watch(filterName, (newFilterName) => {
   history.replaceState(
-    null,
+    history.state,
     '',
     `?name=${newFilterName}&status=${
       filterStatus.value
@@ -84,7 +85,7 @@ watch(filterName, (newFilterName) => {
 });
 watch(filterStatus, (newFilterStatus) => {
   history.replaceState(
-    null,
+    history.state,
     '',
     `?name=${
       filterName.value
@@ -94,7 +95,7 @@ watch(filterStatus, (newFilterStatus) => {
 watch(filterService, (newFilterService) => {
   newFilterService = newFilterService.join('.');
   history.replaceState(
-    null,
+    history.state,
     '',
     `?name=${filterName.value}&status=${filterStatus.value}&service=${newFilterService}`,
   );
@@ -140,58 +141,57 @@ function deleteHost(id) {
   <h1 class="q-my-sm">Host list</h1>
   <div class="row q-col-gutter-x-lg q-my-sm">
     <div class="col-12 col-md-3">
-      <div class="column no-wrap justify-start items-stretch">
-        <q-btn
-          @click="filtersVisibilitySelect = true"
-          v-if="!filtersVisibilitySelect"
-          class="lt-md"
-          color="accent"
-        >
-          Show filters
-        </q-btn>
-        <q-btn
-          @click="filtersVisibilitySelect = false"
-          v-if="filtersVisibilitySelect"
-          class="lt-md"
-        >
-          Hide filters
-        </q-btn>
+      <q-btn
+        @click="filtersVisibilitySelect = true"
+        v-if="!filtersVisibilitySelect"
+        class="lt-md q-mb-md"
+        color="accent"
+      >
+        Show filters
+      </q-btn>
+      <q-btn
+        @click="filtersVisibilitySelect = false"
+        v-if="filtersVisibilitySelect"
+        class="lt-md q-mb-md"
+      >
+        Hide filters
+      </q-btn>
+      <transition name="filters">
         <div
-          class="fit column no-wrap justify-start q-my-sm q-gutter-sm"
+          class="column no-wrap justify-start items-stretch"
           v-if="filtersVisibility"
         >
-          <strong>Filter by status:</strong>
-          <q-radio v-model="filterStatus" val="any" label="Any" dense />
-          <q-radio v-model="filterStatus" val="true" label="OK" dense />
-          <q-radio v-model="filterStatus" val="false" label="FAIL" dense />
-        </div>
+          <div class="fit column no-wrap justify-start q-my-sm q-gutter-sm">
+            <strong>Filter by status:</strong>
+            <q-radio v-model="filterStatus" val="any" label="Any" dense />
+            <q-radio v-model="filterStatus" val="true" label="OK" dense />
+            <q-radio v-model="filterStatus" val="false" label="FAIL" dense />
+          </div>
 
-        <div
-          class="fit column no-wrap justify-start q-my-sm q-gutter-sm"
-          v-if="filtersVisibility"
-        >
-          <div><strong>Filter by service:</strong></div>
-          <template
-            v-for="service of servicesStore.services"
-            :key="service.serviceId"
-          >
-            <q-checkbox
-              v-model="filterService"
-              :val="service.serviceId"
-              :label="service.serviceName"
-              dense
-            />
-          </template>
+          <div class="fit column no-wrap justify-start q-my-sm q-gutter-sm">
+            <div><strong>Filter by service:</strong></div>
+            <template
+              v-for="service of servicesStore.services"
+              :key="service.serviceId"
+            >
+              <q-checkbox
+                v-model="filterService"
+                :val="service.serviceId"
+                :label="service.serviceName"
+                dense
+              />
+            </template>
+          </div>
+
+          <q-btn
+            label="Reset filters"
+            color="primary"
+            @click="filterReset"
+            class="q-my-md"
+          />
+          <hr />
         </div>
-        <q-btn
-          label="Reset filters"
-          color="primary"
-          @click="filterReset"
-          class="q-my-md"
-          v-if="filtersVisibility"
-        />
-        <hr />
-      </div>
+      </transition>
     </div>
 
     <div class="col-12 col-md-9">
@@ -223,67 +223,72 @@ function deleteHost(id) {
           v-if="!filteredHostsList.length"
           class="column items-center q-mt-lg"
         >
-          <q-icon name="fa-solid fa-snowman" size="2em" />No hosts to display
+          <q-icon name="fa-solid fa-snowman" size="2em" />No hosts to display,
+          please check filter settings
         </div>
+        <TransitionGroup name="hosts-list">
+          <q-card
+            class="q-pa-md q-mb-lg shadow-6"
+            v-for="hostItem of filteredHostsList"
+            :key="hostItem._id"
+            :class="{
+              ok: hostItem.hostStatus == 'true',
+              fail: hostItem.hostStatus == 'false',
+            }"
+          >
+            <h3 class="hostName">
+              <router-link
+                :to="{ name: 'host.page', params: { _id: hostItem._id } }"
+                class="text-primary q-ma-sm"
+              >
+                {{ hostItem.hostName }}
+              </router-link>
+              <q-icon
+                name="check_circle"
+                size="1em"
+                color="positive"
+                v-if="hostItem.hostStatus == 'true'"
+              />
+              <q-icon name="warning" size="1em" color="negative" v-else />
+            </h3>
+            <Transition mode="out-in">
+              <q-btn
+                @click="displayHostDetails.add(hostItem._id)"
+                v-if="!displayHostDetails.has(hostItem._id)"
+              >
+                Show details
+              </q-btn>
+              <q-btn
+                @click="displayHostDetails.delete(hostItem._id)"
+                v-else-if="displayHostDetails.has(hostItem._id)"
+                color="dark"
+              >
+                Hide details
+              </q-btn>
+            </Transition>
 
-        <q-card
-          class="q-pa-md q-mb-lg shadow-6"
-          v-for="hostItem of filteredHostsList"
-          :key="hostItem._id"
-          :class="{
-            ok: hostItem.hostStatus == 'true',
-            fail: hostItem.hostStatus == 'false',
-          }"
-        >
-          <h3 class="hostName">
-            <router-link
-              :to="{ name: 'host.page', params: { _id: hostItem._id } }"
-              class="text-primary q-ma-sm"
+            <div
+              class="q-mt-md q-pa-sm"
+              v-if="displayHostDetails.has(hostItem._id)"
             >
-              {{ hostItem.hostName }}
-            </router-link>
-            <q-icon
-              name="check_circle"
-              size="1em"
-              color="positive"
-              v-if="hostItem.hostStatus == 'true'"
-            />
-            <q-icon name="warning" size="1em" color="negative" v-else />
-          </h3>
-          <q-btn
-            @click="displayHostDetails.add(hostItem._id)"
-            v-if="!displayHostDetails.has(hostItem._id)"
-          >
-            Show details
-          </q-btn>
-          <q-btn
-            @click="displayHostDetails.delete(hostItem._id)"
-            v-if="displayHostDetails.has(hostItem._id)"
-            color="dark"
-          >
-            Hide details
-          </q-btn>
-          <div
-            class="q-mt-md q-pa-sm"
-            v-if="displayHostDetails.has(hostItem._id)"
-          >
-            <p class="hostId"><strong>ID:</strong> {{ hostItem._id }}</p>
-            <p><strong>FQDN:</strong> {{ hostItem.hostFqdn }}</p>
-            <p><strong>IP:</strong> {{ hostItem.hostIp }}</p>
-            <p class="serviceId">
-              <strong>Service:</strong>
-              {{ servicesStore.getSeviceName(hostItem.hostService) }}
-            </p>
-          </div>
-          <q-card-actions align="right">
-            <q-btn
-              label="Delete host"
-              color="negative"
-              @click="deleteHost(hostItem._id)"
-              dense
-            />
-          </q-card-actions>
-        </q-card>
+              <p class="hostId"><strong>ID:</strong> {{ hostItem._id }}</p>
+              <p><strong>FQDN:</strong> {{ hostItem.hostFqdn }}</p>
+              <p><strong>IP:</strong> {{ hostItem.hostIp }}</p>
+              <p class="serviceId">
+                <strong>Service:</strong>
+                {{ servicesStore.getSeviceName(hostItem.hostService) }}
+              </p>
+            </div>
+            <q-card-actions align="right">
+              <q-btn
+                label="Delete host"
+                color="negative"
+                @click="deleteHost(hostItem._id)"
+                dense
+              />
+            </q-card-actions>
+          </q-card>
+        </TransitionGroup>
       </div>
     </div>
   </div>
@@ -305,5 +310,29 @@ function deleteHost(id) {
 .q-card.fail {
   box-shadow: 0 2px 5px rgba(151, 42, 42, 0.418),
     0 1px 9px rgba(129, 5, 5, 0.12);
+}
+
+.filters-enter-active,
+.filters-leave-active {
+  transition: all 0.5s ease;
+}
+.filters-enter-from,
+.filters-leave-to {
+  opacity: 0;
+}
+
+.hosts-list-move,
+.hosts-list-enter-active,
+.hosts-list-leave-active {
+  transition: all 0.5s ease;
+}
+.hosts-list-enter-from,
+.hosts-list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.hosts-list-leave-active {
+  position: absolute;
+  width: max-content;
 }
 </style>

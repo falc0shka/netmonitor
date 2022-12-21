@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import api from '../utils/Api';
 
 export const useItemsStore = defineStore('items', {
   state: () => ({
@@ -8,24 +8,15 @@ export const useItemsStore = defineStore('items', {
   }),
   actions: {
     async getItemsByHostId(id) {
-      this.items = (
-        await axios.get(
-          `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/items/${id}`,
-        )
-      ).data;
+      this.items = (await api.get(`/v1/items/${id}`)).data;
     },
     async createItem(values) {
-      await axios.post(
-        `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/items`,
-        {
-          ...values,
-        },
-      );
+      await api.post(`/v1/items`, {
+        ...values,
+      });
     },
     async deleteItem(id) {
-      await axios.delete(
-        `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/items/${id}`,
-      );
+      await api.delete(`/v1/items/${id}`);
     },
   },
 });

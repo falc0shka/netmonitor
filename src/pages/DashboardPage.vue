@@ -38,20 +38,18 @@ watch(autoUpdate, (newValue) => {
   } else {
     autoUpdateRef.value = setInterval(() => {
       hostsStore.getHosts();
-    }, 600000);
+    }, +process.env.variables.API_HOSTS_UPDATE_PERIOD * 1000);
   }
   console.log(`Auto-fetching data is ${newValue} now`);
 });
 
 onMounted(() => {
-  console.log('Mounted!');
   autoUpdateRef.value = setInterval(() => {
     hostsStore.getHosts();
-  }, 600000);
+  }, +process.env.variables.API_HOSTS_UPDATE_PERIOD * 1000);
 });
 onUnmounted(() => {
   clearInterval(autoUpdateRef.value);
-  console.log('Unmounnted!');
 });
 
 const TodoAsyncComp = defineAsyncComponent({
