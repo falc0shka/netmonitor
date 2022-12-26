@@ -65,9 +65,15 @@ const servicesStore = useServicesStore();
               name="check_circle"
               size="1em"
               color="positive"
-              v-if="serviceItem.serviceStatus === 'true'"
+              v-if="serviceItem.serviceStatus === 'ok'"
             />
-            <q-icon name="warning" size="1em" color="negative" v-else />
+            <q-icon
+              name="warning"
+              size="1em"
+              color="negative"
+              v-else-if="serviceItem.serviceStatus === 'fail'"
+            />
+            <q-icon name="help" size="1em" color="warning" v-else />
           </td>
         </tr>
       </tbody>

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-
+import axios from 'axios';
 import api from '../utils/Api';
+import { Notify } from 'quasar';
 
 export const useAuthStore = defineStore('auth', {
   state: () => {
@@ -25,13 +26,18 @@ export const useAuthStore = defineStore('auth', {
         this.isAuth = true;
 
         this.router.push('/');
-      } catch (e) {
-        console.log(e.response.data.message);
+      } catch (error) {
+        Notify.create({
+          color: 'red-4',
+          textColor: 'white',
+          icon: 'warning',
+          message: error.response.data.message,
+        });
       }
     },
     async registration(userData) {
       try {
-        const response = await api.post(`/v1/auth/registration`, {
+        const response = await api.post(`/v1/auth/register`, {
           ...userData,
         });
         localStorage.setItem('token', response.data.tokens.access.token);
@@ -43,8 +49,13 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data.user;
         this.isAuth = true;
         this.router.push('/');
-      } catch (e) {
-        console.log(e.response.data.message);
+      } catch (error) {
+        Notify.create({
+          color: 'red-4',
+          textColor: 'white',
+          icon: 'warning',
+          message: error.response.data.message,
+        });
       }
     },
     async logout() {
@@ -52,8 +63,13 @@ export const useAuthStore = defineStore('auth', {
         const response = await api.post(`/v1/auth/logout`, {
           refreshToken: localStorage.getItem('refreshToken'),
         });
-      } catch (e) {
-        console.log(e.response.data.message);
+      } catch (error) {
+        Notify.create({
+          color: 'red-4',
+          textColor: 'white',
+          icon: 'warning',
+          message: error.response.data.message,
+        });
       } finally {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
@@ -65,15 +81,23 @@ export const useAuthStore = defineStore('auth', {
 
     async checkAuth() {
       try {
-        const response = await api.post(`/v1/auth/refresh-tokens`, {
-          refreshToken: localStorage.getItem('refreshToken'),
-        });
+        const response = await axios.post(
+          `${process.env.variables.API_BASE_URL}:${process.env.variables.API_PORT}/v1/auth/refresh-tokens`,
+          {
+            refreshToken: localStorage.getItem('refreshToken'),
+          },
+        );
         localStorage.setItem('token', response.data.access.token);
         localStorage.setItem('refreshToken', response.data.refresh.token);
-        this.user = response.data.user;
         this.isAuth = true;
-      } catch (e) {
-        console.log(e.response.data.message);
+        return true;
+      } catch (error) {
+        Notify.create({
+          color: 'red-4',
+          textColor: 'white',
+          icon: 'warning',
+          message: error.response.data.message,
+        });
         this.router.push('/login');
       }
     },

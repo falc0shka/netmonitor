@@ -82,19 +82,19 @@ provide('test', readonly(testMesssage));
         <h2 class="q-my-sm">
           Current status
           <q-icon
-            class="current__status__icon"
             name="check_circle"
             size="2em"
             color="positive"
-            v-if="mainStore.mainStatus == true"
+            v-if="mainStore.mainStatus == 'ok'"
           />
           <q-icon
             class="current__status__icon_warning"
             name="warning"
             size="2em"
             color="negative"
-            v-else
+            v-else-if="mainStore.mainStatus == 'fail'"
           />
+          <q-icon name="help" size="2em" color="warning" v-else />
         </h2>
         <h3>Last update from server</h3>
         <p>{{ mainStore.lastUpdate }}</p>

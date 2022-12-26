@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useMainStore = defineStore('main', {
   state: () => ({
-    mainStatus: true,
+    mainStatus: 'unknown',
     lastUpdate: 'Never',
     counter: 0,
   }),

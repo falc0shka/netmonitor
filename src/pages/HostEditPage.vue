@@ -50,8 +50,8 @@ for (let service of servicesStore.services) {
   });
 }
 
-function onSubmit() {
-  hostsStore.updateHost(props._id, {
+async function onSubmit() {
+  await hostsStore.updateHost(props._id, {
     ...hostsStore.host,
   });
 

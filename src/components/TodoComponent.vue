@@ -96,6 +96,7 @@ function todoRemoveItem(id) {
       <div v-if="!todoItemFilteredList.length">No items to display.</div>
       <div v-for="value of todoItemFilteredList" :key="value.id">
         <todo-item
+          class="q-my-sm"
           v-bind="value"
           @todo-item-change-status="
             (id, todoItemStatus) => todoItemChangeStatus(id, todoItemStatus)

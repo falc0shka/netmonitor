@@ -13,8 +13,36 @@ const routes = [
     ],
   },
   {
+    path: '/registration',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      {
+        path: '/registration',
+        name: 'registration',
+        component: () => import('../pages/RegistrationPage.vue'),
+      },
+    ],
+  },
+  {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    beforeEnter: async (to, from, next) => {
+      const authStore = useAuthStore();
+      if (localStorage.getItem('refreshToken')) {
+        if (await authStore.checkAuth()) {
+          next();
+        } else {
+          next('/login');
+        }
+      } else {
+        next('/login');
+      }
+      // const authStore = useAuthStore();
+
+      // if (!authStore.isAuth) {
+      //
+      // }
+    },
     children: [
       {
         path: '/',
@@ -42,6 +70,11 @@ const routes = [
         path: '/admin',
         name: 'admin',
         component: () => import('../pages/AdminPage.vue'),
+      },
+      {
+        path: '/forbidden',
+        name: 'forbidden',
+        component: () => import('../pages/ForbiddenPage.vue'),
       },
     ],
   },

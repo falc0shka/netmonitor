@@ -36,6 +36,7 @@ const test = inject('test');
     </span>
     <q-btn
       flat
+      dense
       class="q-ml-sm q-pa-sm bg-negative text-white"
       @click="$emit('todoItemRemove', props.id)"
       label="Remove"
