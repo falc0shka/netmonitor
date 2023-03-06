@@ -13,8 +13,15 @@ onMounted(() => {
   <q-layout view="lHh Lpr lFf" class="bg-grey-4">
     <q-header elevated>
       <q-toolbar>
-        <q-icon name="fa-solid fa-network-wired" size="2em" />
-        <q-toolbar-title class="text-weight-bold"> Netmonitor</q-toolbar-title>
+        <q-toolbar-title class="text-weight-bold">
+          <router-link to="/" class="title-link">
+            <q-icon
+              name="fa-solid fa-network-wired q-pa-sm"
+              size="2em"
+            ></q-icon>
+            Netmonitor</router-link
+          >
+        </q-toolbar-title>
 
         <div>v0.0.3 (by falc0shka)</div>
       </q-toolbar>
@@ -38,3 +45,10 @@ onMounted(() => {
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped lang="scss">
+.title-link {
+  color: white;
+  text-decoration: none;
+}
+</style>

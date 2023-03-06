@@ -151,8 +151,17 @@ function deleteItem(hostId, itemId) {
     </div>
   </q-card>
 
-  <div class="hostitems">
-    <div class="items q-my-sm" v-if="itemsStore.items.length">
+  <div>
+    <div class="row justify-between items-start q-mt-md q-gutter-sm">
+      <h2 class="q-mb-xs">Monitoring items</h2>
+      <q-btn
+        label="Add new item"
+        color="positive"
+        @click="itemCreateDialog = true"
+      />
+    </div>
+
+    <div v-if="itemsStore.items.length">
       <div class="row justify-between items-start q-my-md q-gutter-sm">
         <q-btn-group v-if="itemsStore.items.length" color="primary">
           <q-btn-toggle
@@ -165,11 +174,6 @@ function deleteItem(hostId, itemId) {
             ]"
           />
         </q-btn-group>
-        <q-btn
-          label="Add new item"
-          color="positive"
-          @click="itemCreateDialog = true"
-        />
       </div>
       <div v-if="!filteredItemsList.length" class="column items-center q-mt-lg">
         <q-icon name="fa-solid fa-snowman" size="2em" />
@@ -219,7 +223,10 @@ function deleteItem(hostId, itemId) {
         </q-card-actions>
       </q-card>
     </div>
-    <div class="items" v-else>No items to display</div>
+    <div v-else class="column items-center q-mt-lg">
+      <q-icon name="fa-solid fa-snowman" size="2em" />
+      There are no items attached to this host
+    </div>
   </div>
 
   <q-dialog v-model="itemCreateDialog" persistent>
